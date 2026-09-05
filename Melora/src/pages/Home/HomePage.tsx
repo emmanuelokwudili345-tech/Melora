@@ -1,3 +1,5 @@
+import { AlbumCard } from "../../components/AlbumCard";
+import { ArtistCard } from "../../components/ArtistCard";
 import { MusicCard } from "../../components/MusicCard";
 import "./HomePage.css";
 
@@ -32,8 +34,8 @@ export function HomePage() {
       </section>
 
       <section className="home-section">
-  <div className="section-header">
-    <h2>Recently Played</h2>
+      <div className="section-header">
+      <h2>Recently Played</h2>
 
     <button type="button">
       See all
@@ -62,6 +64,116 @@ export function HomePage() {
     />
   </div>
  </section>
+
+ <section className="home-section">
+  <div className="section-header">
+    <h2>Made For You</h2>
+    <button type="button">See all</button>
+  </div>
+
+  <div className="music-card-grid">
+    <MusicCard
+      title="Daily Mix"
+      artist="A mix made for you"
+    />
+
+    <MusicCard
+      title="Chill Mix"
+      artist="Relax and unwind"
+    />
+
+    <MusicCard
+      title="Focus Mix"
+      artist="Music for concentration"
+    />
+
+    <MusicCard
+      title="Energy Mix"
+      artist="Keep the energy going"
+    />
+  </div>
+</section>
+
+<section className="home-section">
+  <div className="section-header">
+    <h2>Trending Now</h2>
+    <button type="button">See all</button>
+  </div>
+
+  <div className="trending-list">
+    <div className="trending-row">
+      <span>01</span>
+      <strong>Midnight Drive</strong>
+      <p>Melora Artist</p>
+    </div>
+
+    <div className="trending-row">
+      <span>02</span>
+      <strong>Golden Hour</strong>
+      <p>Melora Artist</p>
+    </div>
+
+    <div className="trending-row">
+      <span>03</span>
+      <strong>After Hours</strong>
+      <p>Melora Artist</p>
+    </div>
+
+    <div className="trending-row">
+      <span>04</span>
+      <strong>Ocean Lights</strong>
+      <p>Melora Artist</p>
+    </div>
+  </div>
+</section>
+
+<section className="home-section">
+  <div className="section-header">
+    <h2>Popular Artists</h2>
+    <button type="button">See all</button>
+  </div>
+
+  <div className="artist-card-grid">
+    <ArtistCard name="Artist One" />
+    <ArtistCard name="Artist Two" />
+    <ArtistCard name="Artist Three" />
+    <ArtistCard name="Artist Four" />
+    <ArtistCard name="Artist Five" />
+  </div>
+</section>
+
+  <section className="home-section">
+  <div className="section-header">
+    <h2>New Releases</h2>
+    <button type="button">See all</button>
+  </div>
+
+  <div className="album-card-grid">
+    <AlbumCard
+      title="New Beginnings"
+      artist="Artist One"
+      year={2026}
+    />
+
+    <AlbumCard
+      title="After Midnight"
+      artist="Artist Two"
+      year={2026}
+    />
+
+    <AlbumCard
+      title="Golden Skies"
+      artist="Artist Three"
+      year={2026}
+    />
+
+    <AlbumCard
+      title="The Journey"
+      artist="Artist Four"
+      year={2026}
+    />
+  </div>
+</section>
   </div>
   );
 }

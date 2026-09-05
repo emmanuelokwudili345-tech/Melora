@@ -99,3 +99,75 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
+
+.artist-card-grid,
+.album-card-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.trending-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.trending-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr;
+  align-items: center;
+  min-height: 58px;
+  padding: 0 12px;
+  border-bottom: 1px solid #27272a;
+}
+
+.trending-row > span {
+  color: #71717a;
+  font-size: 13px;
+}
+
+.trending-row strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.trending-row p {
+  margin: 0;
+  color: #a1a1aa;
+  font-size: 13px;
+}
+
+@media (max-width: 1024px) {
+  .music-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .artist-card-grid,
+  .album-card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20px 16px;
+  }
+
+  .music-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .artist-card-grid,
+  .album-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .featured-card {
+    min-height: 220px;
+    padding: 22px;
+  }
+
+  .featured-content h2 {
+    font-size: 24px;
+  }
+}

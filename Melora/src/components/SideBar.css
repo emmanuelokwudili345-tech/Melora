@@ -46,3 +46,9 @@
   background: transparent;
   color: #ffffff;
 }
+
+@media (max-width: 768px) {
+  .side-bar {
+    display: none;
+  }
+}
