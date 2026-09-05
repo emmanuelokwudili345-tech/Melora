@@ -1,15 +1,20 @@
 import { Outlet } from "react-router";
+import { NavBar } from "../components/NavBar";
+import { SideBar } from "../components/SideBar";
+import "./AppLayout.css";
 
 export function AppLayout() {
   return (
-    <div>
-      <aside>
-        Sidebar
-      </aside>
+    <div className="app-layout">
+      <SideBar />
 
-      <main>
-        <Outlet />
-      </main>
+      <div className="app-content">
+        <NavBar />
+
+        <main className="page-content">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }
