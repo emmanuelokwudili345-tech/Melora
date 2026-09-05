@@ -11,3 +11,9 @@
 .page-content {
   padding: 24px;
 }
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20px 16px;
+  }
+}

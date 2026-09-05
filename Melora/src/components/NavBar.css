@@ -49,3 +49,36 @@
   align-items: center;
   gap: 16px;
 }
+
+.mobile-menu-button {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-bar {
+    height: 56px;
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .nav-bar-navigation {
+    display: none;
+  }
+
+  .nav-bar-search {
+    max-width: none;
+  }
+
+  .nav-bar-actions {
+    gap: 10px;
+  }
+
+  .nav-bar-actions button[aria-label="Notifications"],
+  .nav-bar-actions button:not(.mobile-menu-button) {
+    display: none;
+  }
+
+  .mobile-menu-button {
+    display: block;
+  }
+}

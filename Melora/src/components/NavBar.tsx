@@ -1,4 +1,4 @@
-import './NavBar.css';
+import "./NavBar.css";
 
 export function NavBar() {
   return (
@@ -28,6 +28,14 @@ export function NavBar() {
 
         <button type="button">
           Profile
+        </button>
+
+        <button
+          type="button"
+          className="mobile-menu-button"
+          aria-label="Open navigation menu"
+        >
+          Menu
         </button>
       </div>
     </header>

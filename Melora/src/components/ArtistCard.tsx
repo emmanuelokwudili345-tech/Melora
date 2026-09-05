@@ -20,8 +20,12 @@ export function ArtistCard({
         )}
       </div>
 
-      <h3>{name}</h3>
-      <p>Artist</p>
+      <h3 style={{
+        textAlign: "center"
+      }}>{name}</h3>
+      <p style={{
+        textAlign: 'center'
+      }}>Artist</p>
     </article>
   );
 }
