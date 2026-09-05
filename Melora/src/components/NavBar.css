@@ -1,39 +1,54 @@
 .nav-bar {
   height: 60px;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 24px;
+  gap: 32px;
   padding: 0 24px;
   background: #0b0b0f;
   border-bottom: 1px solid #27272a;
 }
 
-.nav-bar-navigation {
+.nav-bar-brand {
   display: flex;
+  align-items: center;
   gap: 8px;
-}
-
-.nav-bar-navigation button,
-.nav-bar-actions button {
+  padding: 0;
   border: none;
   background: transparent;
   color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.nav-bar-logo {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #8b5cf6;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .nav-bar-search {
-  flex: 1;
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
+  min-width: 0;
 }
 
 .nav-bar-search input {
   width: 100%;
-  padding: 12px 18px;
+  height: 46px;
+  padding: 0 18px;
   border: 1px solid #27272a;
   border-radius: 999px;
   outline: none;
   background: #141419;
   color: #ffffff;
+  font-size: 15px;
 }
 
 .nav-bar-search input::placeholder {
@@ -44,41 +59,40 @@
   border-color: #8b5cf6;
 }
 
-.nav-bar-actions {
+.nav-bar-profile {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  white-space: nowrap;
 }
 
-.mobile-menu-button {
-  display: none;
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #1c1c23;
+  border: 1px solid #27272a;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.profile-text {
+  font-size: 14px;
 }
 
 @media (max-width: 768px) {
   .nav-bar {
-    height: 56px;
-    gap: 12px;
-    padding: 0 16px;
-  }
-
-  .nav-bar-navigation {
-    display: none;
+    grid-template-columns: 1fr auto;
   }
 
   .nav-bar-search {
-    max-width: none;
-  }
-
-  .nav-bar-actions {
-    gap: 10px;
-  }
-
-  .nav-bar-actions button[aria-label="Notifications"],
-  .nav-bar-actions button:not(.mobile-menu-button) {
     display: none;
-  }
-
-  .mobile-menu-button {
-    display: block;
   }
 }

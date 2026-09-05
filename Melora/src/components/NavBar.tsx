@@ -1,43 +1,41 @@
+import { useNavigate } from "react-router";
 import "./NavBar.css";
 
 export function NavBar() {
+  const navigate = useNavigate();
+
   return (
     <header className="nav-bar">
-      <div className="nav-bar-navigation">
-        <button type="button" aria-label="Go back">
-          Back
-        </button>
-
-        <button type="button" aria-label="Go forward">
-          Forward
-        </button>
-      </div>
+      <button
+        type="button"
+        className="nav-bar-brand"
+        onClick={() => navigate("/")}
+      >
+        <span className="nav-bar-logo">M</span>
+        <span>Melora</span>
+      </button>
 
       <div className="nav-bar-search">
         <input
           type="search"
           placeholder="Search songs, artists, albums..."
           aria-label="Search music"
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              navigate("/search");
+            }
+          }}
         />
       </div>
 
-      <div className="nav-bar-actions">
-        <button type="button" aria-label="Notifications">
-          Notifications
-        </button>
-
-        <button type="button">
-          Profile
-        </button>
-
-        <button
-          type="button"
-          className="mobile-menu-button"
-          aria-label="Open navigation menu"
-        >
-          Menu
-        </button>
-      </div>
+      <button
+        type="button"
+        className="nav-bar-profile"
+        onClick={() => navigate("/profile")}
+      >
+        <span className="profile-avatar">P</span>
+        <span className="profile-text">Profile</span>
+      </button>
     </header>
   );
 }
