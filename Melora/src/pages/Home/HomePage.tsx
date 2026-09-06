@@ -1,9 +1,28 @@
+import { useEffect, useState } from "react";
+import { getTrendingTracks } from "../../services/audius";
+import type { MusicTrack } from "../../types/music";
 import { AlbumCard } from "../../components/AlbumCard";
 import { ArtistCard } from "../../components/ArtistCard";
 import { MusicCard } from "../../components/MusicCard";
 import "./HomePage.css";
 
 export function HomePage() {
+  const [trendingTracks, setTrendingTracks] = useState<MusicTrack[]>([]);
+
+  useEffect(() => {
+    async function loadTrendingTracks() {
+      try {
+        const tracks = await getTrendingTracks();
+
+        setTrendingTracks(tracks);
+      } catch (error) {
+        console.error("Failed to load trending tracks:", error);
+      }
+    }
+
+    loadTrendingTracks();
+  }, []);
+
   return (
     <div className="home-page">
       <section className="home-greeting">
@@ -22,158 +41,118 @@ export function HomePage() {
 
             <h2>Discover something new</h2>
 
-            <p>
-              Explore fresh music and find your next favorite track.
-            </p>
+            <p>Explore fresh music and find your next favorite track.</p>
 
-            <button type="button">
-              Play Now
-            </button>
+            <button type="button">Play Now</button>
           </div>
         </div>
       </section>
 
       <section className="home-section">
-      <div className="section-header">
-      <h2>Recently Played</h2>
+        <div className="section-header">
+          <h2>Recently Played</h2>
 
-    <button type="button">
-      See all
-    </button>
-  </div>
+          <button type="button">See all</button>
+        </div>
 
-  <div className="music-card-grid">
-    <MusicCard
-      title="Midnight Drive"
-      artist="Melora Artist"
-     />
+        <div className="music-card-grid">
+          <MusicCard title="Midnight Drive" artist="Melora Artist" />
 
-    <MusicCard
-      title="Golden Hour"
-      artist="Melora Artist"
-    />
+          <MusicCard title="Golden Hour" artist="Melora Artist" />
 
-    <MusicCard
-      title="After Hours"
-      artist="Melora Artist"
-    />
+          <MusicCard title="After Hours" artist="Melora Artist" />
 
-    <MusicCard
-      title="Ocean Lights"
-      artist="Melora Artist"
-    />
-  </div>
- </section>
+          <MusicCard title="Ocean Lights" artist="Melora Artist" />
+        </div>
+      </section>
 
- <section className="home-section">
-  <div className="section-header">
-    <h2>Made For You</h2>
-    <button type="button">See all</button>
-  </div>
+      <section className="home-section">
+        <div className="section-header">
+          <h2>Made For You</h2>
 
-  <div className="music-card-grid">
-    <MusicCard
-      title="Daily Mix"
-      artist="A mix made for you"
-    />
+          <button type="button">See all</button>
+        </div>
 
-    <MusicCard
-      title="Chill Mix"
-      artist="Relax and unwind"
-    />
+        <div className="music-card-grid">
+          <MusicCard title="Daily Mix" artist="A mix made for you" />
 
-    <MusicCard
-      title="Focus Mix"
-      artist="Music for concentration"
-    />
+          <MusicCard title="Chill Mix" artist="Relax and unwind" />
 
-    <MusicCard
-      title="Energy Mix"
-      artist="Keep the energy going"
-    />
-  </div>
-</section>
+          <MusicCard title="Focus Mix" artist="Music for concentration" />
 
-<section className="home-section">
-  <div className="section-header">
-    <h2>Trending Now</h2>
-    <button type="button">See all</button>
-  </div>
+          <MusicCard title="Energy Mix" artist="Keep the energy going" />
+        </div>
+      </section>
 
-  <div className="trending-list">
-    <div className="trending-row">
-      <span>01</span>
-      <strong>Midnight Drive</strong>
-      <p>Melora Artist</p>
+      <section className="home-section">
+        <div className="section-header">
+          <h2>Trending Now</h2>
+
+          <button type="button">See all</button>
+        </div>
+
+        <div className="trending-list">
+          {trendingTracks.slice(0, 4).map((track, index) => (
+            <div className="trending-row" key={track.id}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+
+              <strong>{track.title}</strong>
+
+              <p>{track.user.name}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="home-section">
+        <div className="section-header">
+          <h2>Popular Artists</h2>
+
+          <button type="button">See all</button>
+        </div>
+
+        <div className="artist-card-grid">
+          <ArtistCard name="Artist One" />
+          <ArtistCard name="Artist Two" />
+          <ArtistCard name="Artist Three" />
+          <ArtistCard name="Artist Four" />
+          <ArtistCard name="Artist Five" />
+        </div>
+      </section>
+
+      <section className="home-section">
+        <div className="section-header">
+          <h2>New Releases</h2>
+
+          <button type="button">See all</button>
+        </div>
+
+        <div className="album-card-grid">
+          <AlbumCard
+            title="New Beginnings"
+            artist="Artist One"
+            year={2026}
+          />
+
+          <AlbumCard
+            title="After Midnight"
+            artist="Artist Two"
+            year={2026}
+          />
+
+          <AlbumCard
+            title="Golden Skies"
+            artist="Artist Three"
+            year={2026}
+          />
+
+          <AlbumCard
+            title="The Journey"
+            artist="Artist Four"
+            year={2026}
+          />
+        </div>
+      </section>
     </div>
-
-    <div className="trending-row">
-      <span>02</span>
-      <strong>Golden Hour</strong>
-      <p>Melora Artist</p>
-    </div>
-
-    <div className="trending-row">
-      <span>03</span>
-      <strong>After Hours</strong>
-      <p>Melora Artist</p>
-    </div>
-
-    <div className="trending-row">
-      <span>04</span>
-      <strong>Ocean Lights</strong>
-      <p>Melora Artist</p>
-    </div>
-  </div>
-</section>
-
-<section className="home-section">
-  <div className="section-header">
-    <h2>Popular Artists</h2>
-    <button type="button">See all</button>
-  </div>
-
-  <div className="artist-card-grid">
-    <ArtistCard name="Artist One" />
-    <ArtistCard name="Artist Two" />
-    <ArtistCard name="Artist Three" />
-    <ArtistCard name="Artist Four" />
-    <ArtistCard name="Artist Five" />
-  </div>
-</section>
-
-  <section className="home-section">
-  <div className="section-header">
-    <h2>New Releases</h2>
-    <button type="button">See all</button>
-  </div>
-
-  <div className="album-card-grid">
-    <AlbumCard
-      title="New Beginnings"
-      artist="Artist One"
-      year={2026}
-    />
-
-    <AlbumCard
-      title="After Midnight"
-      artist="Artist Two"
-      year={2026}
-    />
-
-    <AlbumCard
-      title="Golden Skies"
-      artist="Artist Three"
-      year={2026}
-    />
-
-    <AlbumCard
-      title="The Journey"
-      artist="Artist Four"
-      year={2026}
-    />
-  </div>
-</section>
-  </div>
   );
 }
