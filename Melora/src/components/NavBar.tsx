@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import "./NavBar.css";
 
 export function NavBar() {
@@ -28,14 +28,21 @@ export function NavBar() {
         />
       </div>
 
-      <button
-        type="button"
-        className="nav-bar-profile"
-        onClick={() => navigate("/profile")}
-      >
-        <span className="profile-avatar">P</span>
-        <span className="profile-text">Profile</span>
-      </button>
+      <NavLink 
+        to="/profile"
+        style={{
+          textDecoration: 'none'
+        }}
+        >
+        <button
+          type="button"
+          className="nav-bar-profile"
+          onClick={() => navigate("/profile")}
+        >
+          <span className="profile-avatar">P</span>
+          <span className="profile-text">Profile</span>
+        </button>
+      </NavLink>
     </header>
   );
 }
