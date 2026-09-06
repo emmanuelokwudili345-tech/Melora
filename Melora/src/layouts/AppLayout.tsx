@@ -1,3 +1,4 @@
+import { MusicPlayer } from "../components/MusicPlayer";
 import { Outlet } from "react-router";
 import { NavBar } from "../components/NavBar";
 import { SideBar } from "../components/SideBar";
@@ -14,6 +15,8 @@ export function AppLayout() {
         <main className="page-content">
           <Outlet />
         </main>
+
+        <MusicPlayer />
       </div>
     </div>
   );

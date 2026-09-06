@@ -1,3 +1,4 @@
+import { usePlayer } from "../../context/usePlayer";
 import { useEffect, useState } from "react";
 import { getTrendingTracks } from "../../services/audius";
 import type { MusicTrack } from "../../types/music";
@@ -8,6 +9,7 @@ import "./HomePage.css";
 
 export function HomePage() {
   const [trendingTracks, setTrendingTracks] = useState<MusicTrack[]>([]);
+  const { setCurrentTrack } = usePlayer();
 
   useEffect(() => {
     async function loadTrendingTracks() {
@@ -47,6 +49,26 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <section className="home-section">
+        <div className="section-header">
+          <h2>Trending Tracks</h2>
+
+          <button type="button">See all</button>
+        </div>
+
+        <div className="music-card-grid">
+          {trendingTracks.map((track) => (
+            <MusicCard
+              key={track.id}
+              title={track.title}
+              artist={track.user.name}
+              artwork={track.artwork?._480x480}
+              onClick={() => setCurrentTrack(track)}
+            />
+          ))}
+        </div>
+     </section>
 
       <section className="home-section">
         <div className="section-header">
@@ -92,17 +114,29 @@ export function HomePage() {
         </div>
 
         <div className="trending-list">
-          {trendingTracks.slice(0, 4).map((track, index) => (
-            <div className="trending-row" key={track.id}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
+            {trendingTracks.slice(0, 4).map((track, index) => (
+              <div className="trending-row" key={track.id}>
+                <span className="trending-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
 
-              <strong>{track.title}</strong>
+              <div className="trending-artwork">
+                {track.artwork?._150x150 && (
+                  <img
+                    src={track.artwork._150x150}
+                    alt={`${track.title} artwork`}
+                  />
+                )}
+              </div>
 
-              <p>{track.user.name}</p>
+              <div className="trending-track-info">
+                <strong>{track.title}</strong>
+                <p>{track.user.name}</p>
+              </div>
             </div>
           ))}
-        </div>
-      </section>
+       </div>
+     </section>
 
       <section className="home-section">
         <div className="section-header">
