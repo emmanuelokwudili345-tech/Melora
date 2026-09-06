@@ -1,17 +1,18 @@
+import { NavLink } from "react-router";
 import "./SideBar.css";
 
 export function SideBar() {
   return (
     <aside className="side-bar">
       <div className="side-bar-logo">
-      <h1>Melora</h1>
+        <h1>Melora</h1>
       </div>
 
       <nav className="side-bar-nav">
-        <a href="/">Home</a>
-        <a href="/search">Search</a>
-        <a href="/library">Your Library</a>
-        <a href="/liked">Liked Songs</a>
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/search">Search</NavLink>
+        <NavLink to="/library">Your Library</NavLink>
+        <NavLink to="/liked">Liked Songs</NavLink>
       </nav>
 
       <div className="side-bar-playlists">

@@ -18,6 +18,7 @@
 }
 
 .side-bar-nav a {
+  display: block;
   padding: 9px 10px;
   color: #a1a1aa;
   text-decoration: none;
@@ -26,6 +27,11 @@
 }
 
 .side-bar-nav a:hover {
+  background: #1c1c23;
+  color: #ffffff;
+}
+
+.side-bar-nav a.active {
   background: #1c1c23;
   color: #ffffff;
 }
