@@ -4,6 +4,7 @@ import {
   Maximize2,
   Pause,
   Play,
+  Repeat1,
   Repeat2,
   Shuffle,
   SkipBack,
@@ -26,18 +27,20 @@ function formatTime(time: number) {
 
 export function MusicPlayer() {
   const {
-  currentTrack,
-  isPlaying,
-  currentTime,
-  duration,
-  volume,
-  play,
-  pause,
-  seek,
-  setVolume,
-  nextTrack,
-  previousTrack,
-} = usePlayer();
+    currentTrack,
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
+    repeatMode,
+    play,
+    pause,
+    seek,
+    setVolume,
+    nextTrack,
+    previousTrack,
+    toggleRepeatMode,
+  } = usePlayer();
 
   if (!currentTrack) {
     return null;
@@ -46,12 +49,6 @@ export function MusicPlayer() {
   const artwork =
     currentTrack.artwork?._480x480 ??
     currentTrack.artwork?._150x150;
-
-    function handleVolumeChange(
-      event: React.ChangeEvent<HTMLInputElement>,
-      ) {
-        setVolume(Number(event.target.value));
-      }
 
   function handlePlayPause() {
     if (isPlaying) {
@@ -65,6 +62,12 @@ export function MusicPlayer() {
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
     seek(Number(event.target.value));
+  }
+
+  function handleVolumeChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    setVolume(Number(event.target.value));
   }
 
   return (
@@ -131,11 +134,21 @@ export function MusicPlayer() {
           </button>
 
           <button
-            type="button"
-            aria-label="Repeat"
-          >
-            <Repeat2 size={18} />
-          </button>
+  type="button"
+  onClick={toggleRepeatMode}
+  aria-label={`Repeat mode: ${repeatMode}`}
+  className={
+    repeatMode !== "off"
+      ? "music-player-control-active"
+      : ""
+  }
+>
+  {repeatMode === "one" ? (
+    <Repeat1 size={18} />
+  ) : (
+    <Repeat2 size={18} />
+  )}
+</button>
         </div>
 
         <div className="music-player-progress">

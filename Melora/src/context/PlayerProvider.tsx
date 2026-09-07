@@ -1,32 +1,78 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { MusicTrack } from "../types/music";
-import { PlayerContext } from "./PlayerContext";
+import {
+  PlayerContext,
+  type RepeatMode,
+} from "./PlayerContext";
 
 interface PlayerProviderProps {
   children: ReactNode;
 }
 
-export function PlayerProvider({ children }: PlayerProviderProps) {
-  const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
-  const [queue, setQueue] = useState<MusicTrack[]>([]);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(-1);
+export function PlayerProvider({
+  children,
+}: PlayerProviderProps) {
+  const [currentTrack, setCurrentTrack] =
+    useState<MusicTrack | null>(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolumeState] = useState(0.7);
+  const [queue, setQueue] =
+    useState<MusicTrack[]>([]);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [currentTrackIndex, setCurrentTrackIndex] =
+    useState(-1);
+
+  const [isPlaying, setIsPlaying] =
+    useState(false);
+
+  const [currentTime, setCurrentTime] =
+    useState(0);
+
+  const [duration, setDuration] =
+    useState(0);
+
+  const [volume, setVolumeState] =
+    useState(0.7);
+
+  const [repeatMode, setRepeatMode] =
+    useState<RepeatMode>("off");
+
+  const audioRef =
+    useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!currentTrack || !audioRef.current) {
       return;
     }
 
+    const audio = audioRef.current;
+
     setCurrentTime(0);
     setDuration(0);
+
+    audio.load();
+
+    async function startPlaying() {
+      try {
+        await audio.play();
+      } catch (error) {
+        console.error(
+          "Failed to play track:",
+          error,
+        );
+      }
+    }
+
+    startPlaying();
   }, [currentTrack]);
+
+  useEffect(() => {
+    if (!audioRef.current) {
+      return;
+    }
+
+    audioRef.current.volume = volume;
+  }, [volume]);
 
   function handleTrackChange(track: MusicTrack) {
     const trackIndex = queue.findIndex(
@@ -39,17 +85,16 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
 
   function handleQueueChange(tracks: MusicTrack[]) {
     setQueue(tracks);
-
-    if (!currentTrack && tracks.length > 0) {
-      setCurrentTrackIndex(-1);
-    }
   }
 
   async function play() {
     try {
       await audioRef.current?.play();
     } catch (error) {
-      console.error("Failed to play track:", error);
+      console.error(
+        "Failed to play track:",
+        error,
+      );
     }
   }
 
@@ -67,11 +112,6 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
   }
 
   function setVolume(volumeValue: number) {
-    if (!audioRef.current) {
-      return;
-    }
-
-    audioRef.current.volume = volumeValue;
     setVolumeState(volumeValue);
   }
 
@@ -80,14 +120,20 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
       return;
     }
 
-    const nextIndex = currentTrackIndex + 1;
+    const nextIndex =
+      currentTrackIndex + 1;
 
-    if (nextIndex >= queue.length) {
+    if (nextIndex < queue.length) {
+      setCurrentTrack(queue[nextIndex]);
+      setCurrentTrackIndex(nextIndex);
+
       return;
     }
 
-    setCurrentTrack(queue[nextIndex]);
-    setCurrentTrackIndex(nextIndex);
+    if (repeatMode === "all") {
+      setCurrentTrack(queue[0]);
+      setCurrentTrackIndex(0);
+    }
   }
 
   function previousTrack() {
@@ -95,14 +141,32 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
       return;
     }
 
-    const previousIndex = currentTrackIndex - 1;
+    const previousIndex =
+      currentTrackIndex - 1;
 
-    if (previousIndex < 0) {
-      return;
+    if (previousIndex >= 0) {
+      setCurrentTrack(
+        queue[previousIndex],
+      );
+
+      setCurrentTrackIndex(
+        previousIndex,
+      );
     }
+  }
 
-    setCurrentTrack(queue[previousIndex]);
-    setCurrentTrackIndex(previousIndex);
+  function toggleRepeatMode() {
+    setRepeatMode((currentMode) => {
+      if (currentMode === "off") {
+        return "all";
+      }
+
+      if (currentMode === "all") {
+        return "one";
+      }
+
+      return "off";
+    });
   }
 
   function handleTimeUpdate() {
@@ -110,7 +174,9 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
       return;
     }
 
-    setCurrentTime(audioRef.current.currentTime);
+    setCurrentTime(
+      audioRef.current.currentTime,
+    );
   }
 
   function handleLoadedMetadata() {
@@ -118,18 +184,31 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
       return;
     }
 
-    setDuration(audioRef.current.duration);
+    setDuration(
+      audioRef.current.duration,
+    );
   }
 
-  async function handleCanPlay() {
-    try {
-      await audioRef.current?.play();
-    } catch (error) {
-      console.error("Failed to automatically play track:", error);
+  async function handleTrackEnded() {
+    if (!audioRef.current) {
+      return;
     }
-  }
 
-  function handleTrackEnded() {
+    if (repeatMode === "one") {
+      audioRef.current.currentTime = 0;
+
+      try {
+        await audioRef.current.play();
+      } catch (error) {
+        console.error(
+          "Failed to repeat track:",
+          error,
+        );
+      }
+
+      return;
+    }
+
     nextTrack();
   }
 
@@ -141,25 +220,32 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
         currentTime,
         duration,
         volume,
+        repeatMode,
+
         setCurrentTrack: handleTrackChange,
         setQueue: handleQueueChange,
+
         play,
         pause,
         seek,
         setVolume,
+
         nextTrack,
         previousTrack,
+
+        toggleRepeatMode,
       }}
     >
       <audio
         ref={audioRef}
         src={currentTrack?.stream?.url}
         preload="auto"
-        onCanPlay={handleCanPlay}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
+        onLoadedMetadata={
+          handleLoadedMetadata
+        }
         onEnded={handleTrackEnded}
       />
 

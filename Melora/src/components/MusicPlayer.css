@@ -210,3 +210,7 @@
     height: 48px;
   }
 }
+
+.music-player-control-active {
+  color: #ffffff;
+}
