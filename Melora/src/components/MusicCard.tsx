@@ -1,18 +1,19 @@
+import type { MusicTrack } from "../types/music";
 import "./MusicCard.css";
 
 interface MusicCardProps {
-  title: string;
-  artist: string;
-  artwork?: string;
-  onClick?: () => void;
+  track: MusicTrack;
+  onClick: () => void;
 }
 
 export function MusicCard({
-  title,
-  artist,
-  artwork,
+  track,
   onClick,
 }: MusicCardProps) {
+  const artwork =
+    track.artwork?._480x480 ??
+    track.artwork?._150x150;
+
   return (
     <article
       className="music-card"
@@ -22,14 +23,14 @@ export function MusicCard({
         {artwork && (
           <img
             src={artwork}
-            alt={`${title} artwork`}
+            alt={`${track.title} artwork`}
           />
         )}
       </div>
 
-      <h3>{title}</h3>
+      <h3>{track.title}</h3>
 
-      <p>{artist}</p>
+      <p>{track.user.name}</p>
     </article>
   );
 }

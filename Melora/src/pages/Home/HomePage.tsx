@@ -9,7 +9,8 @@ import "./HomePage.css";
 
 export function HomePage() {
   const [trendingTracks, setTrendingTracks] = useState<MusicTrack[]>([]);
-  const { setCurrentTrack } = usePlayer();
+
+  const { setCurrentTrack, setQueue } = usePlayer();
 
   useEffect(() => {
     async function loadTrendingTracks() {
@@ -17,13 +18,14 @@ export function HomePage() {
         const tracks = await getTrendingTracks();
 
         setTrendingTracks(tracks);
+        setQueue(tracks);
       } catch (error) {
         console.error("Failed to load trending tracks:", error);
       }
     }
 
     loadTrendingTracks();
-  }, []);
+  }, [setQueue]);
 
   return (
     <div className="home-page">
@@ -61,9 +63,7 @@ export function HomePage() {
           {trendingTracks.map((track) => (
             <MusicCard
               key={track.id}
-              title={track.title}
-              artist={track.user.name}
-              artwork={track.artwork?._480x480}
+              track={track}
               onClick={() => setCurrentTrack(track)}
             />
           ))}
@@ -78,13 +78,13 @@ export function HomePage() {
         </div>
 
         <div className="music-card-grid">
-          <MusicCard title="Midnight Drive" artist="Melora Artist" />
-
-          <MusicCard title="Golden Hour" artist="Melora Artist" />
-
-          <MusicCard title="After Hours" artist="Melora Artist" />
-
-          <MusicCard title="Ocean Lights" artist="Melora Artist" />
+          {trendingTracks.map((track) => (
+            <MusicCard
+              key={track.id}
+              track={track}
+              onClick={() => setCurrentTrack(track)}
+            />
+          ))}
         </div>
       </section>
 
@@ -96,13 +96,13 @@ export function HomePage() {
         </div>
 
         <div className="music-card-grid">
-          <MusicCard title="Daily Mix" artist="A mix made for you" />
-
-          <MusicCard title="Chill Mix" artist="Relax and unwind" />
-
-          <MusicCard title="Focus Mix" artist="Music for concentration" />
-
-          <MusicCard title="Energy Mix" artist="Keep the energy going" />
+          {trendingTracks.map((track) => (
+            <MusicCard
+              key={track.id}
+              track={track}
+              onClick={() => setCurrentTrack(track)}
+            />
+          ))}
         </div>
       </section>
 

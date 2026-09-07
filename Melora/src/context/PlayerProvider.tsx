@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { MusicTrack } from "../types/music";
 import { PlayerContext } from "./PlayerContext";
@@ -9,14 +9,160 @@ interface PlayerProviderProps {
 
 export function PlayerProvider({ children }: PlayerProviderProps) {
   const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
+  const [queue, setQueue] = useState<MusicTrack[]>([]);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(-1);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolumeState] = useState(0.7);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (!currentTrack || !audioRef.current) {
+      return;
+    }
+
+    setCurrentTime(0);
+    setDuration(0);
+  }, [currentTrack]);
+
+  function handleTrackChange(track: MusicTrack) {
+    const trackIndex = queue.findIndex(
+      (queueTrack) => queueTrack.id === track.id,
+    );
+
+    setCurrentTrack(track);
+    setCurrentTrackIndex(trackIndex);
+  }
+
+  function handleQueueChange(tracks: MusicTrack[]) {
+    setQueue(tracks);
+
+    if (!currentTrack && tracks.length > 0) {
+      setCurrentTrackIndex(-1);
+    }
+  }
+
+  async function play() {
+    try {
+      await audioRef.current?.play();
+    } catch (error) {
+      console.error("Failed to play track:", error);
+    }
+  }
+
+  function pause() {
+    audioRef.current?.pause();
+  }
+
+  function seek(time: number) {
+    if (!audioRef.current) {
+      return;
+    }
+
+    audioRef.current.currentTime = time;
+    setCurrentTime(time);
+  }
+
+  function setVolume(volumeValue: number) {
+    if (!audioRef.current) {
+      return;
+    }
+
+    audioRef.current.volume = volumeValue;
+    setVolumeState(volumeValue);
+  }
+
+  function nextTrack() {
+    if (queue.length === 0) {
+      return;
+    }
+
+    const nextIndex = currentTrackIndex + 1;
+
+    if (nextIndex >= queue.length) {
+      return;
+    }
+
+    setCurrentTrack(queue[nextIndex]);
+    setCurrentTrackIndex(nextIndex);
+  }
+
+  function previousTrack() {
+    if (queue.length === 0) {
+      return;
+    }
+
+    const previousIndex = currentTrackIndex - 1;
+
+    if (previousIndex < 0) {
+      return;
+    }
+
+    setCurrentTrack(queue[previousIndex]);
+    setCurrentTrackIndex(previousIndex);
+  }
+
+  function handleTimeUpdate() {
+    if (!audioRef.current) {
+      return;
+    }
+
+    setCurrentTime(audioRef.current.currentTime);
+  }
+
+  function handleLoadedMetadata() {
+    if (!audioRef.current) {
+      return;
+    }
+
+    setDuration(audioRef.current.duration);
+  }
+
+  async function handleCanPlay() {
+    try {
+      await audioRef.current?.play();
+    } catch (error) {
+      console.error("Failed to automatically play track:", error);
+    }
+  }
+
+  function handleTrackEnded() {
+    nextTrack();
+  }
 
   return (
     <PlayerContext.Provider
       value={{
         currentTrack,
-        setCurrentTrack,
+        isPlaying,
+        currentTime,
+        duration,
+        volume,
+        setCurrentTrack: handleTrackChange,
+        setQueue: handleQueueChange,
+        play,
+        pause,
+        seek,
+        setVolume,
+        nextTrack,
+        previousTrack,
       }}
     >
+      <audio
+        ref={audioRef}
+        src={currentTrack?.stream?.url}
+        preload="auto"
+        onCanPlay={handleCanPlay}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={handleTrackEnded}
+      />
+
       {children}
     </PlayerContext.Provider>
   );

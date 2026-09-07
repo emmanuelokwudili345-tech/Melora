@@ -2,6 +2,7 @@ import {
   Heart,
   ListMusic,
   Maximize2,
+  Pause,
   Play,
   Repeat2,
   Shuffle,
@@ -12,8 +13,31 @@ import {
 import { usePlayer } from "../context/usePlayer";
 import "./MusicPlayer.css";
 
+function formatTime(time: number) {
+  if (!Number.isFinite(time)) {
+    return "0:00";
+  }
+
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export function MusicPlayer() {
-  const { currentTrack } = usePlayer();
+  const {
+  currentTrack,
+  isPlaying,
+  currentTime,
+  duration,
+  volume,
+  play,
+  pause,
+  seek,
+  setVolume,
+  nextTrack,
+  previousTrack,
+} = usePlayer();
 
   if (!currentTrack) {
     return null;
@@ -22,6 +46,26 @@ export function MusicPlayer() {
   const artwork =
     currentTrack.artwork?._480x480 ??
     currentTrack.artwork?._150x150;
+
+    function handleVolumeChange(
+      event: React.ChangeEvent<HTMLInputElement>,
+      ) {
+        setVolume(Number(event.target.value));
+      }
+
+  function handlePlayPause() {
+    if (isPlaying) {
+      pause();
+    } else {
+      play();
+    }
+  }
+
+  function handleProgressChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    seek(Number(event.target.value));
+  }
 
   return (
     <section className="music-player">
@@ -59,6 +103,7 @@ export function MusicPlayer() {
 
           <button
             type="button"
+            onClick={previousTrack}
             aria-label="Previous song"
           >
             <SkipBack size={20} />
@@ -67,13 +112,19 @@ export function MusicPlayer() {
           <button
             type="button"
             className="music-player-play"
-            aria-label="Play"
+            onClick={handlePlayPause}
+            aria-label={isPlaying ? "Pause" : "Play"}
           >
-            <Play size={20} fill="currentColor" />
+            {isPlaying ? (
+              <Pause size={20} fill="currentColor" />
+            ) : (
+              <Play size={20} fill="currentColor" />
+            )}
           </button>
 
           <button
             type="button"
+            onClick={nextTrack}
             aria-label="Next song"
           >
             <SkipForward size={20} />
@@ -88,18 +139,18 @@ export function MusicPlayer() {
         </div>
 
         <div className="music-player-progress">
-          <span>0:00</span>
+          <span>{formatTime(currentTime)}</span>
 
           <input
             type="range"
             min="0"
-            max="100"
-            value="0"
-            readOnly
+            max={duration || 0}
+            value={currentTime}
+            onChange={handleProgressChange}
             aria-label="Song progress"
           />
 
-          <span>0:00</span>
+          <span>{formatTime(duration)}</span>
         </div>
       </div>
 
@@ -121,9 +172,10 @@ export function MusicPlayer() {
         <input
           type="range"
           min="0"
-          max="100"
-          value="70"
-          readOnly
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={handleVolumeChange}
           aria-label="Volume"
         />
 
