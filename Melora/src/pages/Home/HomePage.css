@@ -117,9 +117,19 @@
   grid-template-columns: 40px 48px minmax(0, 1fr);
   align-items: center;
   gap: 12px;
+  width: 100%;
   min-height: 64px;
   padding: 8px 12px;
+  background: transparent;
+  border: none;
   border-bottom: 1px solid #27272a;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.trending-row:hover {
+  background: #1c1c23;
 }
 
 .trending-number {

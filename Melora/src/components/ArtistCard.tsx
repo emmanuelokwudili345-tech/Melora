@@ -12,20 +12,29 @@ export function ArtistCard({
   return (
     <article className="artist-card">
       <div className="artist-card-image">
-        {image && (
+        {image ? (
           <img
             src={image}
-            alt={name}
+            alt={`${name} profile`}
           />
+        ) : (
+          <div className="artist-card-placeholder">
+            {name.charAt(0)}
+          </div>
         )}
       </div>
 
-      <h3 style={{
-        textAlign: "center"
-      }}>{name}</h3>
-      <p style={{
+      <h3
+      style={{
         textAlign: 'center'
-      }}>Artist</p>
+      }}
+      >{name}</h3>
+
+      <p
+      style={{
+        textAlign: 'center'
+      }}
+      >Artist</p>
     </article>
   );
 }

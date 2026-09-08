@@ -3,12 +3,22 @@ import { usePlayer } from "../../context/usePlayer";
 import { MusicCard } from "../../components/MusicCard";
 import { getTrendingTracks } from "../../services/audius";
 import type { MusicTrack } from "../../types/music";
+import { ArtistCard } from "../../components/ArtistCard";
 import "./HomePage.css";
 
 export function HomePage() {
   const [trendingTracks, setTrendingTracks] = useState<MusicTrack[]>([]);
 
   const { setCurrentTrack, setQueue } = usePlayer();
+
+  const popularArtists = Array.from(
+    new Map(
+      trendingTracks.map((track) => [
+        track.user.id,
+        track.user,
+      ]),
+    ).values(),
+  );
 
   useEffect(() => {
     async function loadTrendingTracks() {
@@ -78,14 +88,64 @@ export function HomePage() {
 
       <section className="home-section">
         <div className="section-header">
-          <h2>Recently Played</h2>
+          <h2>Trending Now</h2>
+
+          <button type="button">
+            See all
+          </button>
         </div>
 
-        <div className="empty-section">
-          <p>
-            Play some music and your recently played
-            tracks will appear here.
-          </p>
+        <div className="trending-list">
+          {trendingTracks.slice(0, 5).map((track, index) => (
+            <button
+              type="button"
+              className="trending-row"
+              key={track.id}
+              onClick={() => setCurrentTrack(track)}
+            >
+              <span className="trending-number">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <div className="trending-artwork">
+                {track.artwork?._150x150 && (
+                  <img
+                    src={track.artwork._150x150}
+                    alt={`${track.title} artwork`}
+                  />
+                )}
+              </div>
+
+              <div className="trending-track-info">
+                <strong>{track.title}</strong>
+
+                <p>{track.user.name}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="home-section">
+        <div className="section-header">
+          <h2>Popular Artists</h2>
+
+          <button type="button">
+            See all
+          </button>
+        </div>
+
+        <div className="artist-card-grid">
+          {popularArtists.map((artist) => (
+            <ArtistCard
+              key={artist.id}
+              name={artist.name}
+              image={
+                artist.profilePicture?._480x480 ??
+                artist.profilePicture?._150x150
+              }
+            />
+          ))}
         </div>
       </section>
     </div>
