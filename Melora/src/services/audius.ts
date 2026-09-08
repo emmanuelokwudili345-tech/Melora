@@ -13,6 +13,15 @@ declare global {
         }) => Promise<{
           data?: MusicTrack[];
         }>;
+
+        searchTracks: (params?: {
+          query?: string;
+          limit?: number;
+          offset?: number;
+          sortMethod?: "relevant" | "popular" | "recent";
+        }) => Promise<{
+          data?: MusicTrack[];
+        }>;
       };
     };
   }
@@ -31,6 +40,16 @@ const audiusSdk = window.audiusSdk({
 export async function getTrendingTracks(): Promise<MusicTrack[]> {
   const { data } = await audiusSdk.tracks.getTrendingTracks({
     limit: 10,
+  });
+
+  return data ?? [];
+}
+
+export async function getNewReleases(): Promise<MusicTrack[]> {
+  const { data } = await audiusSdk.tracks.searchTracks({
+    query: "",
+    limit: 20,
+    sortMethod: "recent",
   });
 
   return data ?? [];

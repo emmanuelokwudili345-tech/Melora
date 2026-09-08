@@ -1,27 +1,22 @@
 import { useEffect, useState } from "react";
 import { usePlayer } from "../../context/usePlayer";
 import { MusicCard } from "../../components/MusicCard";
-import { getTrendingTracks } from "../../services/audius";
-import type { MusicTrack } from "../../types/music";
 import { ArtistCard } from "../../components/ArtistCard";
+import {
+  getNewReleases,
+  getTrendingTracks,
+} from "../../services/audius";
+import type { MusicTrack } from "../../types/music";
 import "./HomePage.css";
 
 export function HomePage() {
   const [trendingTracks, setTrendingTracks] = useState<MusicTrack[]>([]);
+  const [newReleases, setNewReleases] = useState<MusicTrack[]>([]);
 
   const { setCurrentTrack, setQueue } = usePlayer();
 
-  const popularArtists = Array.from(
-    new Map(
-      trendingTracks.map((track) => [
-        track.user.id,
-        track.user,
-      ]),
-    ).values(),
-  );
-
   useEffect(() => {
-    async function loadTrendingTracks() {
+    async function loadMusic() {
       try {
         const tracks = await getTrendingTracks();
 
@@ -32,8 +27,39 @@ export function HomePage() {
       }
     }
 
-    loadTrendingTracks();
+    loadMusic();
   }, [setQueue]);
+
+  useEffect(() => {
+    async function loadNewReleases() {
+      try {
+        const tracks = await getNewReleases();
+
+        setNewReleases(tracks);
+      } catch (error) {
+        console.error(
+          "Failed to load new releases:",
+          error,
+        );
+      }
+    }
+
+    loadNewReleases();
+  }, []);
+
+  const popularArtists = Array.from(
+    new Map(
+      trendingTracks.map((track) => [
+        track.user.id,
+        {
+          name: track.user.name,
+          image:
+            track.user.profilePicture?._480x480 ??
+            track.user.profilePicture?._150x150,
+        },
+      ]),
+    ).values(),
+  );
 
   return (
     <div className="home-page">
@@ -89,16 +115,11 @@ export function HomePage() {
       <section className="home-section">
         <div className="section-header">
           <h2>Trending Now</h2>
-
-          <button type="button">
-            See all
-          </button>
         </div>
 
         <div className="trending-list">
           {trendingTracks.slice(0, 5).map((track, index) => (
-            <button
-              type="button"
+            <div
               className="trending-row"
               key={track.id}
               onClick={() => setCurrentTrack(track)}
@@ -121,7 +142,7 @@ export function HomePage() {
 
                 <p>{track.user.name}</p>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </section>
@@ -129,23 +150,52 @@ export function HomePage() {
       <section className="home-section">
         <div className="section-header">
           <h2>Popular Artists</h2>
+        </div>
+
+        <div className="artist-card-grid">
+          {popularArtists.map((artist) => (
+            <ArtistCard
+              key={artist.name}
+              name={artist.name}
+              image={artist.image}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="home-section">
+        <div className="section-header">
+          <h2>New Releases</h2>
 
           <button type="button">
             See all
           </button>
         </div>
 
-        <div className="artist-card-grid">
-          {popularArtists.map((artist) => (
-            <ArtistCard
-              key={artist.id}
-              name={artist.name}
-              image={
-                artist.profilePicture?._480x480 ??
-                artist.profilePicture?._150x150
-              }
+        <div className="new-releases-grid">
+          {newReleases.map((track) => (
+            <MusicCard
+              key={track.id}
+              track={track}
+              onClick={() => {
+                setQueue(newReleases);
+                setCurrentTrack(track);
+              }}
             />
           ))}
+        </div>
+      </section>
+
+      <section className="home-section">
+        <div className="section-header">
+          <h2>Recently Played</h2>
+        </div>
+
+        <div className="empty-section">
+          <p>
+            Play some music and your recently played
+            tracks will appear here.
+          </p>
         </div>
       </section>
     </div>

@@ -1,0 +1,306 @@
+.now-playing {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #12131a;
+
+  color: #ffffff;
+}
+
+.now-playing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 64px;
+
+  padding: 0 16px;
+}
+
+.now-playing-header button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+.now-playing-header p {
+  margin: 0;
+
+  color: #a1a1aa;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  letter-spacing: 0.1em;
+}
+
+.now-playing-options-wrapper {
+  position: relative;
+}
+
+.now-playing-options-menu {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 190px;
+
+  padding: 6px;
+
+  border: 1px solid #282a35;
+  border-radius: 12px;
+
+  background: #1c1c23;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.now-playing-options-menu button {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  width: 100%;
+
+  padding: 12px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.now-playing-options-menu button:hover {
+  background: #282a35;
+}
+
+.now-playing-options-menu button svg {
+  color: #a1a1aa;
+}
+
+.now-playing-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  justify-content: center;
+
+  width: 100%;
+  max-width: 600px;
+
+  margin: 0 auto;
+
+  padding: 20px 24px 40px;
+}
+
+.now-playing-artwork {
+  width: 100%;
+
+  aspect-ratio: 1;
+
+  overflow: hidden;
+
+  border-radius: 16px;
+
+  background: #1c1c23;
+}
+
+.now-playing-artwork img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.now-playing-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-top: 28px;
+}
+
+.now-playing-track > div {
+  min-width: 0;
+}
+
+.now-playing-track h1 {
+  margin: 0 0 6px;
+
+  overflow: hidden;
+
+  font-size: 22px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.now-playing-track p {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #a1a1aa;
+
+  font-size: 15px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.now-playing-track button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 44px;
+  height: 44px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+/* PROGRESS */
+
+.now-playing-progress {
+  margin-top: 28px;
+}
+
+.now-playing-progress input {
+  width: 100%;
+
+  accent-color: #8b5cf6;
+
+  cursor: pointer;
+}
+
+.now-playing-time {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 8px;
+}
+
+.now-playing-time span {
+  color: #a1a1aa;
+
+  font-size: 12px;
+}
+
+/* CONTROLS */
+
+.now-playing-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 32px;
+}
+
+.now-playing-controls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #d4d4d8;
+
+  cursor: pointer;
+}
+
+.now-playing-play {
+  width: 64px !important;
+  height: 64px !important;
+
+  border-radius: 50% !important;
+
+  background: #8b5cf6 !important;
+
+  color: #ffffff !important;
+}
+
+.now-playing-control-active {
+  color: #ffffff !important;
+}
+
+/* DESKTOP */
+
+@media (min-width: 769px) {
+  .now-playing {
+    display: none;
+  }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 400px) {
+  .now-playing-content {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .now-playing-controls {
+    gap: 4px;
+  }
+
+  .now-playing-controls button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .now-playing-play {
+    width: 58px !important;
+    height: 58px !important;
+  }
+}
