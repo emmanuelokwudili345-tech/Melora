@@ -1,4 +1,5 @@
 import {
+  ChevronUp,
   Heart,
   ListMusic,
   Maximize2,
@@ -61,17 +62,25 @@ export function MusicPlayer() {
   function handleProgressChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
-    seek(Number(event.target.value));
+    seek(Number(event.currentTarget.value));
   }
 
   function handleVolumeChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
-    setVolume(Number(event.target.value));
+    setVolume(Number(event.currentTarget.value));
   }
 
   return (
     <section className="music-player">
+      <button
+        type="button"
+        className="music-player-expand"
+        aria-label="Expand player"
+      >
+        <ChevronUp size={20} />
+      </button>
+
       <div className="music-player-track">
         {artwork && (
           <img
@@ -83,6 +92,7 @@ export function MusicPlayer() {
 
         <div className="music-player-info">
           <h3>{currentTrack.title}</h3>
+
           <p>{currentTrack.user.name}</p>
         </div>
 
@@ -134,21 +144,21 @@ export function MusicPlayer() {
           </button>
 
           <button
-  type="button"
-  onClick={toggleRepeatMode}
-  aria-label={`Repeat mode: ${repeatMode}`}
-  className={
-    repeatMode !== "off"
-      ? "music-player-control-active"
-      : ""
-  }
->
-  {repeatMode === "one" ? (
-    <Repeat1 size={18} />
-  ) : (
-    <Repeat2 size={18} />
-  )}
-</button>
+            type="button"
+            onClick={toggleRepeatMode}
+            aria-label={`Repeat mode: ${repeatMode}`}
+            className={
+              repeatMode !== "off"
+                ? "music-player-control-active"
+                : ""
+            }
+          >
+            {repeatMode === "one" ? (
+              <Repeat1 size={18} />
+            ) : (
+              <Repeat2 size={18} />
+            )}
+          </button>
         </div>
 
         <div className="music-player-progress">
