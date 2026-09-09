@@ -16,63 +16,32 @@ export function PlayerProvider({
   const [currentTrack, setCurrentTrack] =
     useState<MusicTrack | null>(null);
 
-  const [queue, setQueue] =
-    useState<MusicTrack[]>([]);
+  const [queue, setQueue] = useState<MusicTrack[]>([]);
 
   const [currentTrackIndex, setCurrentTrackIndex] =
     useState(-1);
 
-  const [isPlaying, setIsPlaying] =
-    useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const [currentTime, setCurrentTime] =
-    useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
 
-  const [duration, setDuration] =
-    useState(0);
+  const [duration, setDuration] = useState(0);
 
-  const [volume, setVolumeState] =
-    useState(0.7);
+  const [volume, setVolumeState] = useState(0.7);
 
   const [repeatMode, setRepeatMode] =
     useState<RepeatMode>("off");
 
-  const audioRef =
-    useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!currentTrack || !audioRef.current) {
       return;
     }
 
-    const audio = audioRef.current;
-
     setCurrentTime(0);
     setDuration(0);
-
-    audio.load();
-
-    async function startPlaying() {
-      try {
-        await audio.play();
-      } catch (error) {
-        console.error(
-          "Failed to play track:",
-          error,
-        );
-      }
-    }
-
-    startPlaying();
   }, [currentTrack]);
-
-  useEffect(() => {
-    if (!audioRef.current) {
-      return;
-    }
-
-    audioRef.current.volume = volume;
-  }, [volume]);
 
   function handleTrackChange(track: MusicTrack) {
     const trackIndex = queue.findIndex(
@@ -85,16 +54,17 @@ export function PlayerProvider({
 
   function handleQueueChange(tracks: MusicTrack[]) {
     setQueue(tracks);
+
+    if (!currentTrack && tracks.length > 0) {
+      setCurrentTrackIndex(-1);
+    }
   }
 
   async function play() {
     try {
       await audioRef.current?.play();
     } catch (error) {
-      console.error(
-        "Failed to play track:",
-        error,
-      );
+      console.error("Failed to play track:", error);
     }
   }
 
@@ -108,10 +78,17 @@ export function PlayerProvider({
     }
 
     audioRef.current.currentTime = time;
+
     setCurrentTime(time);
   }
 
   function setVolume(volumeValue: number) {
+    if (!audioRef.current) {
+      return;
+    }
+
+    audioRef.current.volume = volumeValue;
+
     setVolumeState(volumeValue);
   }
 
@@ -120,8 +97,7 @@ export function PlayerProvider({
       return;
     }
 
-    const nextIndex =
-      currentTrackIndex + 1;
+    const nextIndex = currentTrackIndex + 1;
 
     if (nextIndex < queue.length) {
       setCurrentTrack(queue[nextIndex]);
@@ -141,17 +117,11 @@ export function PlayerProvider({
       return;
     }
 
-    const previousIndex =
-      currentTrackIndex - 1;
+    const previousIndex = currentTrackIndex - 1;
 
     if (previousIndex >= 0) {
-      setCurrentTrack(
-        queue[previousIndex],
-      );
-
-      setCurrentTrackIndex(
-        previousIndex,
-      );
+      setCurrentTrack(queue[previousIndex]);
+      setCurrentTrackIndex(previousIndex);
     }
   }
 
@@ -174,9 +144,7 @@ export function PlayerProvider({
       return;
     }
 
-    setCurrentTime(
-      audioRef.current.currentTime,
-    );
+    setCurrentTime(audioRef.current.currentTime);
   }
 
   function handleLoadedMetadata() {
@@ -184,9 +152,18 @@ export function PlayerProvider({
       return;
     }
 
-    setDuration(
-      audioRef.current.duration,
-    );
+    setDuration(audioRef.current.duration);
+  }
+
+  async function handleCanPlay() {
+    try {
+      await audioRef.current?.play();
+    } catch (error) {
+      console.error(
+        "Failed to automatically play track:",
+        error,
+      );
+    }
   }
 
   async function handleTrackEnded() {
@@ -209,7 +186,27 @@ export function PlayerProvider({
       return;
     }
 
-    nextTrack();
+    if (queue.length === 0) {
+      return;
+    }
+
+    const nextIndex = currentTrackIndex + 1;
+
+    if (nextIndex < queue.length) {
+      setCurrentTrack(queue[nextIndex]);
+      setCurrentTrackIndex(nextIndex);
+
+      return;
+    }
+
+    if (repeatMode === "all") {
+      setCurrentTrack(queue[0]);
+      setCurrentTrackIndex(0);
+
+      return;
+    }
+
+    setIsPlaying(false);
   }
 
   return (
@@ -240,12 +237,11 @@ export function PlayerProvider({
         ref={audioRef}
         src={currentTrack?.stream?.url}
         preload="auto"
+        onCanPlay={handleCanPlay}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={
-          handleLoadedMetadata
-        }
+        onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleTrackEnded}
       />
 

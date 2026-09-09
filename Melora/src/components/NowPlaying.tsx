@@ -6,6 +6,7 @@ import {
   MoreHorizontal,
   Pause,
   Play,
+  Repeat1,
   Repeat2,
   Shuffle,
   SkipBack,
@@ -57,14 +58,10 @@ export function NowPlaying({
   } = usePlayer();
 
   useEffect(() => {
-    function handleClickOutside(
-      event: MouseEvent,
-    ) {
+    function handleClickOutside(event: MouseEvent) {
       if (
         optionsRef.current &&
-        !optionsRef.current.contains(
-          event.target as Node,
-        )
+        !optionsRef.current.contains(event.target as Node)
       ) {
         setIsOptionsOpen(false);
       }
@@ -209,13 +206,9 @@ export function NowPlaying({
           />
 
           <div className="now-playing-time">
-            <span>
-              {formatTime(currentTime)}
-            </span>
+            <span>{formatTime(currentTime)}</span>
 
-            <span>
-              {formatTime(duration)}
-            </span>
+            <span>{formatTime(duration)}</span>
           </div>
         </div>
 
@@ -239,9 +232,7 @@ export function NowPlaying({
             type="button"
             className="now-playing-play"
             onClick={handlePlayPause}
-            aria-label={
-              isPlaying ? "Pause" : "Play"
-            }
+            aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
               <Pause
@@ -272,9 +263,13 @@ export function NowPlaying({
                 : ""
             }
             onClick={toggleRepeatMode}
-            aria-label={`Repeat mode ${repeatMode}`}
+            aria-label={`Repeat mode: ${repeatMode}`}
           >
-            <Repeat2 size={22} />
+            {repeatMode === "one" ? (
+              <Repeat1 size={22} />
+            ) : (
+              <Repeat2 size={22} />
+            )}
           </button>
         </div>
       </div>
