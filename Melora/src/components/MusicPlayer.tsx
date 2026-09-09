@@ -32,21 +32,23 @@ export function MusicPlayer() {
   const [isNowPlayingOpen, setIsNowPlayingOpen] =
     useState(false);
 
-  const {
-    currentTrack,
-    isPlaying,
-    currentTime,
-    duration,
-    volume,
-    repeatMode,
-    play,
-    pause,
-    seek,
-    setVolume,
-    nextTrack,
-    previousTrack,
-    toggleRepeatMode,
-  } = usePlayer();
+const {
+  currentTrack,
+  isPlaying,
+  currentTime,
+  duration,
+  volume,
+  repeatMode,
+  isShuffleEnabled,
+  play,
+  pause,
+  seek,
+  setVolume,
+  nextTrack,
+  previousTrack,
+  toggleRepeatMode,
+  toggleShuffle,
+} = usePlayer();
 
   if (!currentTrack) {
     return null;
@@ -116,9 +118,19 @@ export function MusicPlayer() {
           <div className="music-player-controls">
             <button
               type="button"
-              aria-label="Shuffle"
+              onClick={toggleShuffle}
+              aria-label="Toggle shuffle"
+              className={`music-player-shuffle ${
+                isShuffleEnabled
+                  ? "music-player-control-active"
+                  : ""
+              }`}
             >
               <Shuffle size={18} />
+
+              {isShuffleEnabled && (
+                <span className="music-player-shuffle-dot" />
+              )}
             </button>
 
             <button

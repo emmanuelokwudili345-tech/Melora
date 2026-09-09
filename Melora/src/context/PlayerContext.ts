@@ -9,18 +9,26 @@ export interface PlayerContextValue {
   currentTime: number;
   duration: number;
   volume: number;
+
   repeatMode: RepeatMode;
+  isShuffleEnabled: boolean;
+
   setCurrentTrack: (track: MusicTrack) => void;
   setQueue: (tracks: MusicTrack[]) => void;
+
   play: () => void;
   pause: () => void;
   seek: (time: number) => void;
+
   setVolume: (volume: number) => void;
+
   nextTrack: () => void;
   previousTrack: () => void;
+
   toggleRepeatMode: () => void;
+  toggleShuffle: () => void;
 }
 
-export const PlayerContext = createContext<PlayerContextValue | undefined>(
-  undefined,
-);
+export const PlayerContext = createContext<
+  PlayerContextValue | undefined
+>(undefined);

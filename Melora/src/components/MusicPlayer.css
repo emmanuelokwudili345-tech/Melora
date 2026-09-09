@@ -197,6 +197,26 @@
   cursor: pointer;
 }
 
+.music-player-shuffle {
+  position: relative;
+}
+
+.music-player-shuffle-dot {
+  position: absolute;
+
+  bottom: -2px;
+  left: 50%;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #8b5cf6;
+
+  transform: translateX(-50%);
+}
+
 /* TABLET */
 
 @media (max-width: 900px) {

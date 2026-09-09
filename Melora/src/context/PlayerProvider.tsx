@@ -32,6 +32,9 @@ export function PlayerProvider({
   const [repeatMode, setRepeatMode] =
     useState<RepeatMode>("off");
 
+  const [isShuffleEnabled, setIsShuffleEnabled] =
+    useState(false);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -78,7 +81,6 @@ export function PlayerProvider({
     }
 
     audioRef.current.currentTime = time;
-
     setCurrentTime(time);
   }
 
@@ -88,12 +90,40 @@ export function PlayerProvider({
     }
 
     audioRef.current.volume = volumeValue;
-
     setVolumeState(volumeValue);
+  }
+
+  function getRandomTrackIndex() {
+    if (queue.length <= 1) {
+      return currentTrackIndex;
+    }
+
+    let randomIndex = Math.floor(
+      Math.random() * queue.length,
+    );
+
+    while (randomIndex === currentTrackIndex) {
+      randomIndex = Math.floor(
+        Math.random() * queue.length,
+      );
+    }
+
+    return randomIndex;
   }
 
   function nextTrack() {
     if (queue.length === 0) {
+      return;
+    }
+
+    if (isShuffleEnabled) {
+      const randomIndex = getRandomTrackIndex();
+
+      if (randomIndex >= 0) {
+        setCurrentTrack(queue[randomIndex]);
+        setCurrentTrackIndex(randomIndex);
+      }
+
       return;
     }
 
@@ -117,6 +147,17 @@ export function PlayerProvider({
       return;
     }
 
+    if (isShuffleEnabled) {
+      const randomIndex = getRandomTrackIndex();
+
+      if (randomIndex >= 0) {
+        setCurrentTrack(queue[randomIndex]);
+        setCurrentTrackIndex(randomIndex);
+      }
+
+      return;
+    }
+
     const previousIndex = currentTrackIndex - 1;
 
     if (previousIndex >= 0) {
@@ -137,6 +178,10 @@ export function PlayerProvider({
 
       return "off";
     });
+  }
+
+  function toggleShuffle() {
+    setIsShuffleEnabled((isEnabled) => !isEnabled);
   }
 
   function handleTimeUpdate() {
@@ -190,23 +235,7 @@ export function PlayerProvider({
       return;
     }
 
-    const nextIndex = currentTrackIndex + 1;
-
-    if (nextIndex < queue.length) {
-      setCurrentTrack(queue[nextIndex]);
-      setCurrentTrackIndex(nextIndex);
-
-      return;
-    }
-
-    if (repeatMode === "all") {
-      setCurrentTrack(queue[0]);
-      setCurrentTrackIndex(0);
-
-      return;
-    }
-
-    setIsPlaying(false);
+    nextTrack();
   }
 
   return (
@@ -217,7 +246,9 @@ export function PlayerProvider({
         currentTime,
         duration,
         volume,
+
         repeatMode,
+        isShuffleEnabled,
 
         setCurrentTrack: handleTrackChange,
         setQueue: handleQueueChange,
@@ -231,6 +262,7 @@ export function PlayerProvider({
         previousTrack,
 
         toggleRepeatMode,
+        toggleShuffle,
       }}
     >
       <audio

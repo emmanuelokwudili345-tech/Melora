@@ -49,19 +49,23 @@ export function NowPlaying({
     currentTime,
     duration,
     repeatMode,
+    isShuffleEnabled,
     play,
     pause,
     seek,
     nextTrack,
     previousTrack,
     toggleRepeatMode,
+    toggleShuffle,
   } = usePlayer();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
         optionsRef.current &&
-        !optionsRef.current.contains(event.target as Node)
+        !optionsRef.current.contains(
+          event.target as Node,
+        )
       ) {
         setIsOptionsOpen(false);
       }
@@ -215,9 +219,19 @@ export function NowPlaying({
         <div className="now-playing-controls">
           <button
             type="button"
-            aria-label="Shuffle"
+            onClick={toggleShuffle}
+            aria-label="Toggle shuffle"
+            className={`now-playing-shuffle ${
+              isShuffleEnabled
+                ? "now-playing-control-active"
+                : ""
+            }`}
           >
             <Shuffle size={22} />
+
+            {isShuffleEnabled && (
+              <span className="now-playing-shuffle-dot" />
+            )}
           </button>
 
           <button

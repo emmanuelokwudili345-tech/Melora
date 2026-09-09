@@ -304,3 +304,23 @@
     height: 58px !important;
   }
 }
+
+.now-playing-shuffle {
+  position: relative;
+}
+
+.now-playing-shuffle-dot {
+  position: absolute;
+
+  bottom: -5px;
+  left: 50%;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #8b5cf6;
+
+  transform: translateX(-50%);
+}
