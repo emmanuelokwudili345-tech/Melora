@@ -1,48 +1,68 @@
-import { NavLink, useNavigate } from "react-router";
+import {
+  Menu,
+  Search,
+  UserCircle,
+} from "lucide-react";
+import { useNavigate } from "react-router";
 import "./NavBar.css";
 
-export function NavBar() {
+interface NavBarProps {
+  onMenuClick: () => void;
+}
+
+export function NavBar({
+  onMenuClick,
+}: NavBarProps) {
   const navigate = useNavigate();
+
+  function handleSearchClick() {
+    navigate("/search");
+  }
 
   return (
     <header className="nav-bar">
       <button
         type="button"
-        className="nav-bar-brand"
-        onClick={() => navigate("/")}
+        className="nav-bar-menu"
+        onClick={onMenuClick}
+        aria-label="Open navigation"
       >
-        <span className="nav-bar-logo">M</span>
-        <span>Melora</span>
+        <Menu size={22} />
       </button>
 
+      <div className="nav-bar-logo">
+        <h1>Melora</h1>
+      </div>
+
       <div className="nav-bar-search">
+        <Search size={18} />
+
         <input
-          type="search"
-          placeholder="Search songs, artists, albums..."
+          type="text"
+          placeholder="Search music..."
           aria-label="Search music"
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              navigate("/search");
-            }
-          }}
+          onFocus={handleSearchClick}
+          readOnly
         />
       </div>
 
-      <NavLink 
-        to="/profile"
-        style={{
-          textDecoration: 'none'
-        }}
-        >
-        <button
-          type="button"
-          className="nav-bar-profile"
-          onClick={() => navigate("/profile")}
-        >
-          <span className="profile-avatar">P</span>
-          <span className="profile-text">Profile</span>
-        </button>
-      </NavLink>
+      <button
+        type="button"
+        className="nav-bar-mobile-search"
+        onClick={handleSearchClick}
+        aria-label="Search"
+      >
+        <Search size={21} />
+      </button>
+
+      <button
+        type="button"
+        className="nav-bar-profile"
+        aria-label="Open profile"
+        onClick={() => navigate("/profile")}
+      >
+        <UserCircle size={30} />
+      </button>
     </header>
   );
 }
