@@ -14,16 +14,8 @@ declare global {
           data?: MusicTrack[];
         }>;
 
-        getTracks: (params?: {
-          limit?: number;
-          offset?: number;
-          sort?: string;
-        }) => Promise<{
-          data?: MusicTrack[];
-        }>;
-
         searchTracks: (params: {
-          query: string;
+          query?: string;
           limit?: number;
           offset?: number;
           sortMethod?:
@@ -63,9 +55,9 @@ export async function getNewReleases(): Promise<
   MusicTrack[]
 > {
   const { data } =
-    await audiusSdk.tracks.getTracks({
+    await audiusSdk.tracks.searchTracks({
       limit: 10,
-      sort: "recent",
+      sortMethod: "recent",
     });
 
   return data ?? [];

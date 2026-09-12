@@ -1,7 +1,6 @@
 .search-page {
   width: 100%;
   max-width: 1400px;
-
   margin: 0 auto;
 }
 
@@ -11,14 +10,12 @@
 
 .search-page-header h1 {
   margin: 0 0 6px;
-
   font-size: 28px;
   font-weight: 600;
 }
 
 .search-page-header p {
   margin: 0;
-
   color: #a1a1aa;
   font-size: 14px;
 }
@@ -28,7 +25,6 @@
 .search-form {
   display: flex;
   gap: 10px;
-
   margin-bottom: 32px;
 }
 
@@ -36,16 +32,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
-
   flex: 1;
-
   padding: 0 14px;
-
   border: 1px solid #282a35;
   border-radius: 10px;
-
   background: #181920;
-
   color: #a1a1aa;
 }
 
@@ -56,12 +47,9 @@
 .search-input-wrapper input {
   width: 100%;
   height: 48px;
-
   border: none;
   outline: none;
-
   background: transparent;
-
   color: #ffffff;
   font-size: 14px;
 }
@@ -70,25 +58,27 @@
   color: #71717a;
 }
 
-.search-form button {
+.search-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-width: 100px;
-
   padding: 0 20px;
-
   border: none;
   border-radius: 10px;
-
   background: #8b5cf6;
-
   color: #ffffff;
   font-weight: 600;
-
   cursor: pointer;
 }
 
-.search-form button:disabled {
-  cursor: not-allowed;
+.search-submit-button svg {
+  display: none;
+}
 
+.search-submit-button:disabled {
+  cursor: not-allowed;
   opacity: 0.7;
 }
 
@@ -100,18 +90,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   min-height: 300px;
-
   text-align: center;
-
   color: #a1a1aa;
 }
 
 .search-placeholder h2,
 .search-status h2 {
   margin: 16px 0 8px;
-
   color: #ffffff;
   font-size: 20px;
 }
@@ -119,7 +105,6 @@
 .search-placeholder p,
 .search-status p {
   margin: 0;
-
   font-size: 14px;
 }
 
@@ -129,19 +114,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   margin-bottom: 16px;
 }
 
 .search-results-header h2 {
   margin: 0;
-
   font-size: 20px;
 }
 
 .search-results-header span {
   color: #71717a;
-
   font-size: 13px;
 }
 
@@ -166,14 +148,23 @@
     margin-bottom: 24px;
   }
 
-  .search-form button {
-    min-width: auto;
-    padding: 0 16px;
+  .search-submit-button {
+    width: 48px;
+    min-width: 48px;
+    padding: 0;
+  }
+
+  .search-submit-button span {
+    display: none;
+  }
+
+  .search-submit-button svg {
+    display: block;
   }
 
   .search-results-header {
-    align-items: flex-start;
     flex-direction: column;
+    align-items: flex-start;
     gap: 4px;
   }
 }

@@ -66,7 +66,6 @@ export function SideBar({
         }`}
       >
         <div className="side-bar-header">
-          <h1>Melora</h1>
 
           <button
             type="button"

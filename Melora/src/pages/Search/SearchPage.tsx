@@ -19,7 +19,11 @@ export function SearchPage() {
     setQueue,
   } = usePlayer();
 
-  async function handleSearch() {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+
     const trimmedQuery = query.trim();
 
     if (!trimmedQuery) {
@@ -30,8 +34,9 @@ export function SearchPage() {
       setIsLoading(true);
       setHasSearched(true);
 
-      const tracks =
-        await searchTracks(trimmedQuery);
+      const tracks = await searchTracks(
+        trimmedQuery,
+      );
 
       setSearchResults(tracks);
       setQueue(tracks);
@@ -45,14 +50,6 @@ export function SearchPage() {
     } finally {
       setIsLoading(false);
     }
-  }
-
-  function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>,
-  ) {
-    event.preventDefault();
-
-    handleSearch();
   }
 
   function handleTrackClick(track: MusicTrack) {
@@ -77,7 +74,7 @@ export function SearchPage() {
           <Search size={20} />
 
           <input
-            type="text"
+            type="search"
             value={query}
             onChange={(event) =>
               setQuery(event.target.value)
@@ -89,7 +86,9 @@ export function SearchPage() {
 
         <button
           type="submit"
+          className="search-submit-button"
           disabled={isLoading}
+          aria-label="Search"
         >
           {isLoading ? (
             <LoaderCircle
@@ -97,7 +96,10 @@ export function SearchPage() {
               className="search-loading-icon"
             />
           ) : (
-            "Search"
+            <>
+              <span>Search</span>
+              <Search size={20} />
+            </>
           )}
         </button>
       </form>
