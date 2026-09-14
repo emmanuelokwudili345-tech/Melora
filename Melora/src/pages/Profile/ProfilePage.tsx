@@ -1,12 +1,19 @@
 import { useState } from "react";
+import {
+  Heart,
+  LogOut,
+  Mail,
+  User,
+} from "lucide-react";
 import { useNavigate } from "react-router";
-import { LogOut } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/useAuth";
+import { useLikedTracks } from "../../context/useLikedTracks";
 import "./ProfilePage.css";
 
 export function ProfilePage() {
   const { user } = useAuth();
+  const { likedTracks } = useLikedTracks();
   const navigate = useNavigate();
 
   const [isLoggingOut, setIsLoggingOut] =
@@ -47,31 +54,65 @@ export function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <section className="profile-header">
+      <section className="profile-hero">
         <div className="profile-avatar">
           {initial}
         </div>
 
         <div className="profile-info">
+          <span>YOUR PROFILE</span>
           <h1>{name}</h1>
           <p>{email}</p>
         </div>
       </section>
 
+      <section className="profile-stats">
+        <div className="profile-stat">
+          <Heart size={20} />
+
+          <div>
+            <strong>{likedTracks.length}</strong>
+            <span>Liked Songs</span>
+          </div>
+        </div>
+
+        <div className="profile-stat">
+          <User size={20} />
+
+          <div>
+            <strong>Member</strong>
+            <span>Melora Account</span>
+          </div>
+        </div>
+      </section>
+
       <section className="profile-section">
         <div className="profile-section-header">
-          <h2>Account</h2>
+          <h2>Account information</h2>
+          <p>Your Melora account details.</p>
         </div>
 
         <div className="profile-account">
-          <div>
-            <span>Name</span>
-            <p>{name}</p>
+          <div className="profile-detail">
+            <div className="profile-detail-icon">
+              <User size={18} />
+            </div>
+
+            <div>
+              <span>Name</span>
+              <p>{name}</p>
+            </div>
           </div>
 
-          <div>
-            <span>Email</span>
-            <p>{email}</p>
+          <div className="profile-detail">
+            <div className="profile-detail-icon">
+              <Mail size={18} />
+            </div>
+
+            <div>
+              <span>Email</span>
+              <p>{email}</p>
+            </div>
           </div>
         </div>
       </section>
@@ -79,6 +120,7 @@ export function ProfilePage() {
       <section className="profile-section">
         <div className="profile-section-header">
           <h2>Account actions</h2>
+          <p>Manage your Melora session.</p>
         </div>
 
         <button
