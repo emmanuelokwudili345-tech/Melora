@@ -5,9 +5,15 @@ import {
   Library,
   Plus,
   Search,
+  UserCircle,
   X,
 } from "lucide-react";
-import { Link, useLocation } from "react-router";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router";
+import { useAuth } from "../context/useAuth";
 import "./SideBar.css";
 
 interface SideBarProps {
@@ -20,6 +26,15 @@ export function SideBar({
   onClose,
 }: SideBarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const name =
+    user?.user_metadata?.name || "Melora User";
+
+  const initial = name
+    .charAt(0)
+    .toUpperCase();
 
   useEffect(() => {
     if (!isOpen) {
@@ -49,6 +64,11 @@ export function SideBar({
     onClose();
   }
 
+  function handleProfileClick() {
+    onClose();
+    navigate("/profile");
+  }
+
   return (
     <>
       {isOpen && (
@@ -66,7 +86,6 @@ export function SideBar({
         }`}
       >
         <div className="side-bar-header">
-
           <button
             type="button"
             className="side-bar-close"
@@ -142,6 +161,23 @@ export function SideBar({
             <span>Create Playlist</span>
           </button>
         </div>
+
+        <button
+          type="button"
+          className="side-bar-profile"
+          onClick={handleProfileClick}
+        >
+          <span className="side-bar-avatar">
+            {initial}
+          </span>
+
+          <span className="side-bar-profile-info">
+            <strong>{name}</strong>
+            <span>View profile</span>
+          </span>
+
+          <UserCircle size={18} />
+        </button>
       </aside>
     </>
   );

@@ -13,6 +13,7 @@ import {
   SkipForward,
   User,
 } from "lucide-react";
+import { useLikedTracks } from "../context/useLikedTracks";
 import { usePlayer } from "../context/usePlayer";
 import "./NowPlaying.css";
 
@@ -59,6 +60,12 @@ export function NowPlaying({
     toggleShuffle,
   } = usePlayer();
 
+  const {
+    isTrackLiked,
+    likeTrack,
+    unlikeTrack,
+  } = useLikedTracks();
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -90,10 +97,13 @@ export function NowPlaying({
     return null;
   }
 
+  const track = currentTrack;
+  const isLiked = isTrackLiked(track.id);
+
   const artwork =
-    currentTrack.artwork?._1000x1000 ??
-    currentTrack.artwork?._480x480 ??
-    currentTrack.artwork?._150x150;
+    track.artwork?._1000x1000 ??
+    track.artwork?._480x480 ??
+    track.artwork?._150x150;
 
   function handlePlayPause() {
     if (isPlaying) {
@@ -116,6 +126,21 @@ export function NowPlaying({
 
   function handleCloseOptions() {
     setIsOptionsOpen(false);
+  }
+
+  async function handleLikeClick() {
+    try {
+      if (isLiked) {
+        await unlikeTrack(track.id);
+      } else {
+        await likeTrack(track);
+      }
+    } catch (error) {
+      console.error(
+        "Failed to update liked track:",
+        error,
+      );
+    }
   }
 
   return (
@@ -179,23 +204,36 @@ export function NowPlaying({
           {artwork && (
             <img
               src={artwork}
-              alt={`${currentTrack.title} artwork`}
+              alt={`${track.title} artwork`}
             />
           )}
         </div>
 
         <div className="now-playing-track">
           <div>
-            <h1>{currentTrack.title}</h1>
+            <h1>{track.title}</h1>
 
-            <p>{currentTrack.user.name}</p>
+            <p>{track.user.name}</p>
           </div>
 
           <button
             type="button"
-            aria-label="Like song"
+            className={
+              isLiked
+                ? "now-playing-track-like-active"
+                : ""
+            }
+            onClick={handleLikeClick}
+            aria-label={
+              isLiked
+                ? `Unlike ${track.title}`
+                : `Like ${track.title}`
+            }
           >
-            <Heart size={22} />
+            <Heart
+              size={22}
+              fill={isLiked ? "currentColor" : "none"}
+            />
           </button>
         </div>
 

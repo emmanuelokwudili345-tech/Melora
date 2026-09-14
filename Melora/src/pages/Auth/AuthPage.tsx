@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
+import {
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { useNavigate } from "react-router";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/useAuth";
 import "./AuthPage.css";
 
 type AuthMode = "login" | "signup";
+type ToastType = "success" | "error";
+
+interface Toast {
+  type: ToastType;
+  message: string;
+}
 
 export function AuthPage() {
   const [mode, setMode] =
@@ -17,16 +27,30 @@ export function AuthPage() {
   const [isLoading, setIsLoading] =
     useState(false);
 
-  const [errorMessage, setErrorMessage] =
-    useState<string | null>(null);
+  const [showPassword, setShowPassword] =
+    useState(false);
 
-  const [successMessage, setSuccessMessage] =
-    useState<string | null>(null);
+  const [toast, setToast] =
+    useState<Toast | null>(null);
 
   const { user, isLoading: isAuthLoading } =
     useAuth();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!toast) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setToast(null);
+    }, 4000);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [toast]);
 
   useEffect(() => {
     if (!isAuthLoading && user) {
@@ -38,6 +62,16 @@ export function AuthPage() {
 
   const isSignup = mode === "signup";
 
+  function showToast(
+    type: ToastType,
+    message: string,
+  ) {
+    setToast({
+      type,
+      message,
+    });
+  }
+
   function handleModeChange() {
     setMode((currentMode) =>
       currentMode === "login"
@@ -45,9 +79,66 @@ export function AuthPage() {
         : "login",
     );
 
-    setErrorMessage(null);
-    setSuccessMessage(null);
+    setToast(null);
     setPassword("");
+    setShowPassword(false);
+  }
+
+  function getAuthErrorMessage(
+    message: string,
+  ) {
+    const normalizedMessage =
+      message.toLowerCase();
+
+    if (
+      normalizedMessage.includes(
+        "invalid login credentials",
+      )
+    ) {
+      return "The email or password is incorrect.";
+    }
+
+    if (
+      normalizedMessage.includes(
+        "user already registered",
+      )
+    ) {
+      return "An account with this email already exists.";
+    }
+
+    if (
+      normalizedMessage.includes(
+        "email not confirmed",
+      )
+    ) {
+      return "Please confirm your email before logging in.";
+    }
+
+    if (
+      normalizedMessage.includes(
+        "password should be at least",
+      )
+    ) {
+      return "Your password is too short.";
+    }
+
+    if (
+      normalizedMessage.includes(
+        "unable to validate email address",
+      )
+    ) {
+      return "Please enter a valid email address.";
+    }
+
+    if (
+      normalizedMessage.includes(
+        "rate limit",
+      )
+    ) {
+      return "Too many attempts. Please wait a moment and try again.";
+    }
+
+    return "Something went wrong. Please try again.";
   }
 
   async function handleSubmit(
@@ -58,22 +149,42 @@ export function AuthPage() {
     const trimmedEmail = email.trim();
     const trimmedName = name.trim();
 
-    if (!trimmedEmail || !password) {
-      setErrorMessage(
-        "Please fill in all required fields.",
+    setToast(null);
+
+    if (!trimmedEmail) {
+      showToast(
+        "error",
+        "Please enter your email address.",
+      );
+      return;
+    }
+
+    if (!password) {
+      showToast(
+        "error",
+        "Please enter your password.",
       );
       return;
     }
 
     if (isSignup && !trimmedName) {
-      setErrorMessage("Please enter your name.");
+      showToast(
+        "error",
+        "Please enter your name.",
+      );
+      return;
+    }
+
+    if (isSignup && password.length < 6) {
+      showToast(
+        "error",
+        "Your password must be at least 6 characters.",
+      );
       return;
     }
 
     try {
       setIsLoading(true);
-      setErrorMessage(null);
-      setSuccessMessage(null);
 
       if (isSignup) {
         const {
@@ -98,10 +209,12 @@ export function AuthPage() {
           return;
         }
 
-        setSuccessMessage(
-          "Account created. Check your email to confirm your account.",
+        showToast(
+          "success",
+          "Account created successfully. Check your email to confirm your account.",
         );
 
+        setPassword("");
         return;
       }
 
@@ -118,11 +231,15 @@ export function AuthPage() {
       navigate("/");
     } catch (error) {
       if (error instanceof Error) {
-        setErrorMessage(error.message);
+        showToast(
+          "error",
+          getAuthErrorMessage(error.message),
+        );
         return;
       }
 
-      setErrorMessage(
+      showToast(
+        "error",
         "Something went wrong. Please try again.",
       );
     } finally {
@@ -136,6 +253,21 @@ export function AuthPage() {
 
   return (
     <main className="auth-page">
+      {toast && (
+        <div
+          className={`auth-toast auth-toast-${toast.type}`}
+          role="status"
+        >
+          <span className="auth-toast-icon">
+            {toast.type === "success"
+              ? "✓"
+              : "!"}
+          </span>
+
+          <p>{toast.message}</p>
+        </div>
+      )}
+
       <section className="auth-card">
         <div className="auth-brand">
           <span className="auth-logo">M</span>
@@ -195,36 +327,49 @@ export function AuthPage() {
           <label>
             Password
 
-            <input
-              type="password"
-              value={password}
-              onChange={(event) =>
-                setPassword(event.target.value)
-              }
-              placeholder="Enter your password"
-              autoComplete={
-                isSignup
-                  ? "new-password"
-                  : "current-password"
-              }
-              disabled={isLoading}
-            />
+            <div className="auth-password">
+              <input
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                value={password}
+                onChange={(event) =>
+                  setPassword(event.target.value)
+                }
+                placeholder="Enter your password"
+                autoComplete={
+                  isSignup
+                    ? "new-password"
+                    : "current-password"
+                }
+                disabled={isLoading}
+              />
+
+              <button
+                type="button"
+                className="auth-password-toggle"
+                onClick={() =>
+                  setShowPassword(
+                    (visible) => !visible,
+                  )
+                }
+                disabled={isLoading}
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+              >
+                {showPassword ? (
+                  <EyeOff size={19} />
+                ) : (
+                  <Eye size={19} />
+                )}
+              </button>
+            </div>
           </label>
-
-          {errorMessage && (
-            <p
-              className="auth-message auth-error"
-              role="alert"
-            >
-              {errorMessage}
-            </p>
-          )}
-
-          {successMessage && (
-            <p className="auth-message auth-success">
-              {successMessage}
-            </p>
-          )}
 
           <button
             type="submit"

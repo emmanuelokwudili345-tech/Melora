@@ -217,6 +217,10 @@
   transform: translateX(-50%);
 }
 
+.music-player-action-active {
+  color: #8b5cf6;
+}
+
 /* TABLET */
 
 @media (max-width: 900px) {

@@ -19,6 +19,43 @@
   object-fit: cover;
 }
 
+.music-card-like {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(11, 11, 15, 0.75);
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.music-card:hover .music-card-like,
+.music-card-like:focus-visible {
+  opacity: 1;
+}
+
+.music-card-like:hover {
+  background: #1c1c23;
+}
+
+.music-card-like-active {
+  opacity: 1;
+  color: #8b5cf6;
+}
+
+.music-card-like:disabled {
+  cursor: default;
+}
+
 .music-card h3 {
   margin: 0 0 4px;
   overflow: hidden;

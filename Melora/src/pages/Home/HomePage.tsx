@@ -109,8 +109,6 @@ export function HomePage() {
           }}
         >
           <div className="featured-content">
-            <span>FEATURED</span>
-
             <h2>
               {featuredTrack?.title ??
                 "Discover something new"}

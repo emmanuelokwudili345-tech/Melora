@@ -324,3 +324,7 @@
 
   transform: translateX(-50%);
 }
+
+.now-playing-track .now-playing-track-like-active {
+  color: #8b5cf6;
+}

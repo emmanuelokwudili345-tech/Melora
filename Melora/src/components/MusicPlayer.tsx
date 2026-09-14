@@ -13,6 +13,7 @@ import {
   SkipForward,
   Volume2,
 } from "lucide-react";
+import { useLikedTracks } from "../context/useLikedTracks";
 import { usePlayer } from "../context/usePlayer";
 import { NowPlaying } from "./NowPlaying";
 import "./MusicPlayer.css";
@@ -32,31 +33,40 @@ export function MusicPlayer() {
   const [isNowPlayingOpen, setIsNowPlayingOpen] =
     useState(false);
 
-const {
-  currentTrack,
-  isPlaying,
-  currentTime,
-  duration,
-  volume,
-  repeatMode,
-  isShuffleEnabled,
-  play,
-  pause,
-  seek,
-  setVolume,
-  nextTrack,
-  previousTrack,
-  toggleRepeatMode,
-  toggleShuffle,
-} = usePlayer();
+  const {
+    currentTrack,
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
+    repeatMode,
+    isShuffleEnabled,
+    play,
+    pause,
+    seek,
+    setVolume,
+    nextTrack,
+    previousTrack,
+    toggleRepeatMode,
+    toggleShuffle,
+  } = usePlayer();
+
+  const {
+    isTrackLiked,
+    likeTrack,
+    unlikeTrack,
+  } = useLikedTracks();
 
   if (!currentTrack) {
     return null;
   }
 
+  const track = currentTrack;
+  const isLiked = isTrackLiked(track.id);
+
   const artwork =
-    currentTrack.artwork?._480x480 ??
-    currentTrack.artwork?._150x150;
+    track.artwork?._480x480 ??
+    track.artwork?._150x150;
 
   function handlePlayPause() {
     if (isPlaying) {
@@ -78,6 +88,21 @@ const {
     setVolume(Number(event.currentTarget.value));
   }
 
+  async function handleLikeClick() {
+    try {
+      if (isLiked) {
+        await unlikeTrack(track.id);
+      } else {
+        await likeTrack(track);
+      }
+    } catch (error) {
+      console.error(
+        "Failed to update liked track:",
+        error,
+      );
+    }
+  }
+
   return (
     <>
       <section className="music-player">
@@ -94,23 +119,32 @@ const {
           {artwork && (
             <img
               src={artwork}
-              alt={`${currentTrack.title} artwork`}
+              alt={`${track.title} artwork`}
               className="music-player-artwork"
             />
           )}
 
           <div className="music-player-info">
-            <h3>{currentTrack.title}</h3>
-
-            <p>{currentTrack.user.name}</p>
+            <h3>{track.title}</h3>
+            <p>{track.user.name}</p>
           </div>
 
           <button
             type="button"
-            className="music-player-action"
-            aria-label="Like song"
+            className={`music-player-action ${
+              isLiked ? "music-player-action-active" : ""
+            }`}
+            onClick={handleLikeClick}
+            aria-label={
+              isLiked
+                ? `Unlike ${track.title}`
+                : `Like ${track.title}`
+            }
           >
-            <Heart size={20} />
+            <Heart
+              size={20}
+              fill={isLiked ? "currentColor" : "none"}
+            />
           </button>
         </div>
 

@@ -1,10 +1,21 @@
 import { useState } from "react";
-import { LoaderCircle, Search } from "lucide-react";
+import {
+  CircleX,
+  LoaderCircle,
+  Search,
+} from "lucide-react";
 import { MusicCard } from "../../components/MusicCard";
 import { usePlayer } from "../../context/usePlayer";
 import { searchTracks } from "../../services/audius";
 import type { MusicTrack } from "../../types/music";
 import "./SearchPage.css";
+
+type ToastType = "success" | "error";
+
+interface Toast {
+  type: ToastType;
+  message: string;
+}
 
 export function SearchPage() {
   const [query, setQuery] = useState("");
@@ -13,11 +24,44 @@ export function SearchPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] =
     useState(false);
+  const [toast, setToast] =
+    useState<Toast | null>(null);
 
   const {
     setCurrentTrack,
     setQueue,
   } = usePlayer();
+
+  function showToast(
+    type: ToastType,
+    message: string,
+  ) {
+    setToast({
+      type,
+      message,
+    });
+
+    window.setTimeout(() => {
+      setToast(null);
+    }, 4000);
+  }
+
+  function getSearchErrorMessage(
+    message: string,
+  ) {
+    const normalizedMessage =
+      message.toLowerCase();
+
+    if (
+      normalizedMessage.includes("network") ||
+      normalizedMessage.includes("fetch") ||
+      normalizedMessage.includes("failed to fetch")
+    ) {
+      return "Unable to connect. Please check your internet connection and try again.";
+    }
+
+    return "We couldn't complete your search. Please try again.";
+  }
 
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
@@ -27,12 +71,18 @@ export function SearchPage() {
     const trimmedQuery = query.trim();
 
     if (!trimmedQuery) {
+      showToast(
+        "error",
+        "Please enter something to search for.",
+      );
       return;
     }
 
     try {
       setIsLoading(true);
       setHasSearched(true);
+      setToast(null);
+      setSearchResults([]);
 
       const tracks = await searchTracks(
         trimmedQuery,
@@ -47,6 +97,18 @@ export function SearchPage() {
       );
 
       setSearchResults([]);
+
+      if (error instanceof Error) {
+        showToast(
+          "error",
+          getSearchErrorMessage(error.message),
+        );
+      } else {
+        showToast(
+          "error",
+          "We couldn't complete your search. Please try again.",
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -56,8 +118,30 @@ export function SearchPage() {
     setCurrentTrack(track);
   }
 
+  function handleClearSearch() {
+    setQuery("");
+    setSearchResults([]);
+    setHasSearched(false);
+    setToast(null);
+  }
+
   return (
     <div className="search-page">
+      {toast && (
+        <div
+          className={`search-toast search-toast-${toast.type}`}
+          role="status"
+        >
+          <span className="search-toast-icon">
+            {toast.type === "success"
+              ? "✓"
+              : "!"}
+          </span>
+
+          <p>{toast.message}</p>
+        </div>
+      )}
+
       <section className="search-page-header">
         <h1>Search</h1>
 
@@ -82,6 +166,17 @@ export function SearchPage() {
             placeholder="Search for songs..."
             aria-label="Search for songs"
           />
+
+          {query && (
+            <button
+              type="button"
+              className="search-clear-button"
+              onClick={handleClearSearch}
+              aria-label="Clear search"
+            >
+              <CircleX size={18} />
+            </button>
+          )}
         </div>
 
         <button
@@ -106,7 +201,9 @@ export function SearchPage() {
 
       {!hasSearched && (
         <div className="search-placeholder">
-          <Search size={42} />
+          <div className="search-placeholder-icon">
+            <Search size={30} />
+          </div>
 
           <h2>Search for music</h2>
 
@@ -132,10 +229,15 @@ export function SearchPage() {
         hasSearched &&
         searchResults.length === 0 && (
           <div className="search-status">
+            <div className="search-empty-icon">
+              <Search size={28} />
+            </div>
+
             <h2>No results found</h2>
 
             <p>
-              Try searching for something else.
+              We couldn't find anything for "
+              {query.trim()}".
             </p>
           </div>
         )}
@@ -144,10 +246,21 @@ export function SearchPage() {
         searchResults.length > 0 && (
           <section className="search-results">
             <div className="search-results-header">
-              <h2>Results</h2>
+              <div>
+                <h2>Results</h2>
+
+                <p>
+                  Showing results for "
+                  {query.trim()}"
+                </p>
+              </div>
 
               <span>
-                {searchResults.length} tracks found
+                {searchResults.length}{" "}
+                {searchResults.length === 1
+                  ? "track"
+                  : "tracks"}{" "}
+                found
               </span>
             </div>
 
