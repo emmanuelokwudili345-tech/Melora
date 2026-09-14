@@ -4,6 +4,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/useAuth";
 import "./NavBar.css";
 
 interface NavBarProps {
@@ -14,9 +15,26 @@ export function NavBar({
   onMenuClick,
 }: NavBarProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const name =
+    user?.user_metadata?.name || "";
+
+  const initial = name
+    .charAt(0)
+    .toUpperCase();
 
   function handleSearchClick() {
     navigate("/search");
+  }
+
+  function handleProfileClick() {
+    if (user) {
+      navigate("/profile");
+      return;
+    }
+
+    navigate("/auth");
   }
 
   return (
@@ -58,10 +76,20 @@ export function NavBar({
       <button
         type="button"
         className="nav-bar-profile"
-        aria-label="Open profile"
-        onClick={() => navigate("/profile")}
+        onClick={handleProfileClick}
+        aria-label={
+          user
+            ? "Open profile"
+            : "Log in or create an account"
+        }
       >
-        <UserCircle size={30} />
+        {user ? (
+          <span className="nav-bar-avatar">
+            {initial}
+          </span>
+        ) : (
+          <UserCircle size={30} />
+        )}
       </button>
     </header>
   );
