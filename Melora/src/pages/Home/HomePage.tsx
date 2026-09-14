@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { usePlayer } from "../../context/usePlayer";
+import { useAuth } from "../../context/useAuth";
 import { MusicCard } from "../../components/MusicCard";
 import { ArtistCard } from "../../components/ArtistCard";
 import {
@@ -14,6 +15,19 @@ export function HomePage() {
   const [newReleases, setNewReleases] = useState<MusicTrack[]>([]);
 
   const { setCurrentTrack, setQueue } = usePlayer();
+  const { user } = useAuth();
+
+  const name =
+  user?.user_metadata?.name?.split(" ")[0] || "there";
+
+  const hour = new Date().getHours();
+
+  const greeting =
+    hour < 12
+      ? "Good morning"
+      : hour < 18
+        ? "Good afternoon"
+        : "Good evening";
 
   useEffect(() => {
     async function loadMusic() {
@@ -66,7 +80,13 @@ export function HomePage() {
   return (
     <div className="home-page">
       <section className="home-greeting">
-        <h1>Welcome back</h1>
+        <h1>
+          {greeting}, {name}
+        </h1>
+
+        <p>
+          Welcome back. What do you want to listen to?
+        </p>
       </section>
 
       <section className="home-section">
