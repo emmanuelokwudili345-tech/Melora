@@ -4,6 +4,7 @@ import {
   Routes,
 } from "react-router";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PlaylistProvider } from "./context/PlaylistProvider";
 import { AppLayout } from "./layouts/AppLayout";
 import { AuthPage } from "./pages/Auth/AuthPage";
 import { HomePage } from "./pages/Home/HomePage";
@@ -13,51 +14,38 @@ import { LikedPage } from "./pages/Liked/LikedPage";
 import { ProfilePage } from "./pages/Profile/ProfilePage";
 import { TrendingDetails } from "./pages/TrendingDetails/TrendingDetails";
 import { ArtistDetails } from "./pages/ArtistDetails/ArtistDetails";
+import { PlaylistDetails } from "./pages/PlaylistDetails/PlaylistDetails";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/auth"
-          element={<AuthPage />}
-        />
+        <Route path="/auth" element={<AuthPage />} />
 
         <Route element={<ProtectedRoute />}>
-          <Route element={<AppLayout />}>
-            <Route
-              path="/"
-              element={<HomePage />}
-            />
-
-            <Route
-              path="/search"
-              element={<SearchPage />}
-            />
-
-            <Route
-              path="/library"
-              element={<LibraryPage />}
-            />
-
-            <Route
-              path="/liked"
-              element={<LikedPage />}
-            />
-
-            <Route
-              path="/profile"
-              element={<ProfilePage />}
-            />
-
+          <Route
+            element={
+              <PlaylistProvider>
+                <AppLayout />
+              </PlaylistProvider>
+            }
+          >
+            <Route path="/" element={<HomePage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/library" element={<LibraryPage />} />
+            <Route path="/liked" element={<LikedPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route
               path="/track/:id"
               element={<TrendingDetails />}
             />
-
             <Route
               path="/artist/:id"
               element={<ArtistDetails />}
+            />
+            <Route
+              path="/playlist/:id"
+              element={<PlaylistDetails />}
             />
           </Route>
         </Route>

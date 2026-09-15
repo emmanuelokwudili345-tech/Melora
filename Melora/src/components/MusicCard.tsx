@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { Heart } from "lucide-react";
-import type { MouseEvent } from "react";
+import { PlaylistMenu } from "./PlaylistMenu";
 import { useLikedTracks } from "../context/useLikedTracks";
 import type { MusicTrack } from "../types/music";
 import "./MusicCard.css";
@@ -8,11 +8,15 @@ import "./MusicCard.css";
 interface MusicCardProps {
   track: MusicTrack;
   onClick: () => void;
+  playlistId?: string;
+  onTrackRemoved?: (trackId: string) => void;
 }
 
 export function MusicCard({
   track,
   onClick,
+  playlistId,
+  onTrackRemoved,
 }: MusicCardProps) {
   const [isLikeLoading, setIsLikeLoading] =
     useState(false);
@@ -72,7 +76,9 @@ export function MusicCard({
         <button
           type="button"
           className={`music-card-like ${
-            isLiked ? "music-card-like-active" : ""
+            isLiked
+              ? "music-card-like-active"
+              : ""
           }`}
           onClick={handleLikeClick}
           disabled={isLikeLoading}
@@ -84,12 +90,24 @@ export function MusicCard({
         >
           <Heart
             size={18}
-            fill={isLiked ? "currentColor" : "none"}
+            fill={
+              isLiked
+                ? "currentColor"
+                : "none"
+            }
           />
         </button>
       </div>
 
-      <h3>{track.title}</h3>
+      <div className="music-card-title-row">
+        <h3>{track.title}</h3>
+
+        <PlaylistMenu
+          track={track}
+          playlistId={playlistId}
+          onTrackRemoved={onTrackRemoved}
+        />
+      </div>
 
       <p>{track.user.name}</p>
     </article>

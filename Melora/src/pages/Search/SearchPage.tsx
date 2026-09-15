@@ -19,12 +19,49 @@ interface Toast {
 }
 
 export function SearchPage() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(() => {
+    return (
+      sessionStorage.getItem(
+        "melora-search-query",
+      ) ?? ""
+    );
+  });
+
   const [searchResults, setSearchResults] =
-    useState<MusicTrack[]>([]);
+    useState<MusicTrack[]>(() => {
+      const savedResults =
+        sessionStorage.getItem(
+          "melora-search-results",
+        );
+
+      if (!savedResults) {
+        return [];
+      }
+
+      try {
+        return JSON.parse(
+          savedResults,
+        ) as MusicTrack[];
+      } catch {
+        sessionStorage.removeItem(
+          "melora-search-results",
+        );
+
+        return [];
+      }
+    });
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [hasSearched, setHasSearched] =
-    useState(false);
+    useState(() => {
+      return Boolean(
+        sessionStorage.getItem(
+          "melora-search-query",
+        ),
+      );
+    });
+
   const [toast, setToast] =
     useState<Toast | null>(null);
 
@@ -90,6 +127,16 @@ export function SearchPage() {
 
       setSearchResults(tracks);
       setQueue(tracks);
+
+      sessionStorage.setItem(
+        "melora-search-query",
+        trimmedQuery,
+      );
+
+      sessionStorage.setItem(
+        "melora-search-results",
+        JSON.stringify(tracks),
+      );
     } catch (error) {
       console.error(
         "Failed to search tracks:",
@@ -123,6 +170,14 @@ export function SearchPage() {
     setSearchResults([]);
     setHasSearched(false);
     setToast(null);
+
+    sessionStorage.removeItem(
+      "melora-search-query",
+    );
+
+    sessionStorage.removeItem(
+      "melora-search-results",
+    );
   }
 
   return (

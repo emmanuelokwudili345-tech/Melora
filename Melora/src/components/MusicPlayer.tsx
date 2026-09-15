@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   ChevronUp,
   Heart,
-  ListMusic,
   Maximize2,
   Pause,
   Play,
@@ -239,13 +238,6 @@ export function MusicPlayer() {
         </div>
 
         <div className="music-player-extra">
-          <button
-            type="button"
-            aria-label="Queue"
-          >
-            <ListMusic size={20} />
-          </button>
-
           <button
             type="button"
             aria-label="Volume"
