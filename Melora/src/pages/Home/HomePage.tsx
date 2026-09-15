@@ -8,13 +8,14 @@ import {
   getTrendingTracks,
 } from "../../services/audius";
 import type { MusicTrack } from "../../types/music";
+import { useNavigate } from "react-router";
 import "./HomePage.css";
 
 export function HomePage() {
   const [trendingTracks, setTrendingTracks] = useState<MusicTrack[]>([]);
   const [newReleases, setNewReleases] = useState<MusicTrack[]>([]);
-
-  const { setCurrentTrack, setQueue } = usePlayer();
+  const navigate = useNavigate();
+  const {  setQueue } = usePlayer();
   const { user } = useAuth();
 
   const name =
@@ -128,7 +129,7 @@ export function HomePage() {
                 }
 
                 setQueue(trendingTracks);
-                setCurrentTrack(featuredTrack);
+                navigate(`/track/${featuredTrack.id}`);
               }}
               disabled={!featuredTrack}
             >
@@ -152,7 +153,7 @@ export function HomePage() {
             <MusicCard
               key={track.id}
               track={track}
-              onClick={() => setCurrentTrack(track)}
+              onClick={() => navigate(`/track/${track.id}`)}
             />
           ))}
         </div>
@@ -168,7 +169,7 @@ export function HomePage() {
             <div
               className="trending-row"
               key={track.id}
-              onClick={() => setCurrentTrack(track)}
+              onClick={() => navigate(`/track/${track.id}`)}
             >
               <span className="trending-number">
                 {String(index + 1).padStart(2, "0")}
@@ -223,10 +224,10 @@ export function HomePage() {
             <MusicCard
               key={track.id}
               track={track}
-              onClick={() => {
-                setQueue(newReleases);
-                setCurrentTrack(track);
-              }}
+              onClick={
+                () => navigate(
+                `/track/${track.id}`
+                )}
             />
           ))}
         </div>

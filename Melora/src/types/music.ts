@@ -4,7 +4,7 @@ interface Artwork {
   _1000x1000?: string;
 }
 
-interface MusicUser {
+export interface MusicUser {
   id: string;
   name: string;
   handle: string;

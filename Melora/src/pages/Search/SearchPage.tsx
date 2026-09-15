@@ -8,6 +8,7 @@ import { MusicCard } from "../../components/MusicCard";
 import { usePlayer } from "../../context/usePlayer";
 import { searchTracks } from "../../services/audius";
 import type { MusicTrack } from "../../types/music";
+import { useNavigate } from "react-router";
 import "./SearchPage.css";
 
 type ToastType = "success" | "error";
@@ -27,10 +28,9 @@ export function SearchPage() {
   const [toast, setToast] =
     useState<Toast | null>(null);
 
-  const {
-    setCurrentTrack,
-    setQueue,
-  } = usePlayer();
+  const { setQueue } = usePlayer();
+
+  const navigate = useNavigate();
 
   function showToast(
     type: ToastType,
@@ -115,7 +115,7 @@ export function SearchPage() {
   }
 
   function handleTrackClick(track: MusicTrack) {
-    setCurrentTrack(track);
+    navigate(`/track/${track.id}`);
   }
 
   function handleClearSearch() {

@@ -11,6 +11,8 @@ import { SearchPage } from "./pages/Search/SearchPage";
 import { LibraryPage } from "./pages/Library/LibraryPage";
 import { LikedPage } from "./pages/Liked/LikedPage";
 import { ProfilePage } from "./pages/Profile/ProfilePage";
+import { TrendingDetails } from "./pages/TrendingDetails/TrendingDetails";
+import { ArtistDetails } from "./pages/ArtistDetails/ArtistDetails";
 
 function App() {
   return (
@@ -46,6 +48,16 @@ function App() {
             <Route
               path="/profile"
               element={<ProfilePage />}
+            />
+
+            <Route
+              path="/track/:id"
+              element={<TrendingDetails />}
+            />
+
+            <Route
+              path="/artist/:id"
+              element={<ArtistDetails />}
             />
           </Route>
         </Route>

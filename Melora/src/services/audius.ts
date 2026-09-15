@@ -6,6 +6,12 @@ declare global {
       apiKey: string;
     }) => {
       tracks: {
+        getTrack: (params: {
+          trackId: string;
+        }) => Promise<{
+          data?: MusicTrack;
+        }>;
+
         getTrendingTracks: (params?: {
           limit?: number;
           offset?: number;
@@ -14,15 +20,16 @@ declare global {
           data?: MusicTrack[];
         }>;
 
-        searchTracks: (params: {
-          query?: string;
-          limit?: number;
-          offset?: number;
-          sortMethod?:
-            | "relevant"
-            | "popular"
-            | "recent";
-        }) => Promise<{
+       searchTracks: (params: {
+        query?: string;
+        limit?: number;
+        offset?: number;
+        sortMethod?:
+          | "relevant"
+          | "popular"
+          | "recent";
+        userId?: string;
+      }) => Promise<{
           data?: MusicTrack[];
         }>;
       };
@@ -77,6 +84,30 @@ export async function searchTracks(
       query: trimmedQuery,
       limit: 20,
       sortMethod: "relevant",
+    });
+
+  return data ?? [];
+}
+
+export async function getTrackById(
+  trackId: string,
+): Promise<MusicTrack | null> {
+  const { data } =
+    await audiusSdk.tracks.getTrack({
+      trackId,
+    });
+
+  return data ?? null;
+}
+
+export async function getTracksByUserId(
+  userId: string,
+): Promise<MusicTrack[]> {
+  const { data } =
+    await audiusSdk.tracks.searchTracks({
+      userId,
+      limit: 20,
+      sortMethod: "popular",
     });
 
   return data ?? [];
