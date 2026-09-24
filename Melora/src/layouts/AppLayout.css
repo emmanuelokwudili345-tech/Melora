@@ -1,13 +1,19 @@
 .app-layout {
   display: flex;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .app-content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-width: 0;
   width: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .page-content {

@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 import {
   Heart,
   Home,
   Library,
   Plus,
   Search,
+  Trash2,
   UserCircle,
   X,
 } from "lucide-react";
@@ -33,6 +37,7 @@ export function SideBar({
   const {
     playlists,
     createPlaylist,
+    deletePlaylist,
   } = usePlaylist();
 
   const [isModalOpen, setIsModalOpen] =
@@ -43,6 +48,13 @@ export function SideBar({
     useState(false);
   const [playlistError, setPlaylistError] =
     useState("");
+  const [deletingPlaylistId, setDeletingPlaylistId] =
+    useState<string | null>(null);
+  const [playlistToDelete, setPlaylistToDelete] =
+    useState<{
+      id: string;
+      name: string;
+    } | null>(null);
 
   const name =
     user?.user_metadata?.name || "Melora User";
@@ -72,6 +84,18 @@ export function SideBar({
       );
     };
   }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isModalOpen) {
@@ -170,6 +194,56 @@ export function SideBar({
     navigate(`/playlist/${playlistId}`);
   }
 
+  function handleDeletePlaylistClick(
+    playlist: {
+      id: string;
+      name: string;
+    },
+  ) {
+    if (deletingPlaylistId) {
+      return;
+    }
+
+    setPlaylistToDelete(playlist);
+  }
+
+  function handleDeletePlaylistClose() {
+    if (deletingPlaylistId) {
+      return;
+    }
+
+    setPlaylistToDelete(null);
+  }
+
+  async function handleDeletePlaylist(
+    playlistId: string,
+  ) {
+    if (deletingPlaylistId) {
+      return;
+    }
+
+    try {
+      setDeletingPlaylistId(playlistId);
+
+      await deletePlaylist(playlistId);
+
+      if (
+        location.pathname ===
+        `/playlist/${playlistId}`
+      ) {
+        navigate("/library");
+      }
+    } catch (error) {
+      console.error(
+        "Failed to delete playlist:",
+        error,
+      );
+    } finally {
+      setDeletingPlaylistId(null);
+      setPlaylistToDelete(null);
+    }
+  }
+
   return (
     <>
       {isOpen && (
@@ -266,18 +340,41 @@ export function SideBar({
           {playlists.length > 0 && (
             <div className="side-bar-playlist-list">
               {playlists.map((playlist) => (
-                <button
+                <div
                   key={playlist.id}
-                  type="button"
                   className="side-bar-playlist"
-                  onClick={() =>
-                    handlePlaylistClick(
-                      playlist.id,
-                    )
-                  }
                 >
-                  <span>{playlist.name}</span>
-                </button>
+                  <button
+                    type="button"
+                    className="side-bar-playlist-link"
+                    onClick={() =>
+                      handlePlaylistClick(
+                        playlist.id,
+                      )
+                    }
+                  >
+                    <span>{playlist.name}</span>
+                  </button>
+
+                  <div className="side-bar-playlist-actions">
+                    <button
+                      type="button"
+                      className="side-bar-playlist-delete"
+                      onClick={() =>
+                        handleDeletePlaylistClick(
+                          playlist,
+                        )
+                      }
+                      disabled={
+                        deletingPlaylistId ===
+                        playlist.id
+                      }
+                      aria-label={`Delete ${playlist.name}`}
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           )}
@@ -379,6 +476,68 @@ export function SideBar({
                 {isCreating
                   ? "Creating..."
                   : "Create"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {playlistToDelete && (
+        <div
+          className="playlist-modal-backdrop"
+          onMouseDown={handleDeletePlaylistClose}
+        >
+          <div
+            className="playlist-modal"
+            onMouseDown={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="playlist-modal-header">
+              <h2>Delete Playlist</h2>
+
+              <button
+                type="button"
+                onClick={handleDeletePlaylistClose}
+                aria-label="Close delete modal"
+                disabled={Boolean(deletingPlaylistId)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="playlist-modal-body">
+              <p className="playlist-delete-warning">
+                Delete "
+                {playlistToDelete.name}
+                "? This will also remove all songs from the playlist.
+              </p>
+            </div>
+
+            <div className="playlist-modal-actions">
+              <button
+                type="button"
+                className="playlist-modal-cancel"
+                onClick={handleDeletePlaylistClose}
+                disabled={Boolean(deletingPlaylistId)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="playlist-modal-delete"
+                onClick={() =>
+                  handleDeletePlaylist(
+                    playlistToDelete.id,
+                  )
+                }
+                disabled={Boolean(deletingPlaylistId)}
+              >
+                {deletingPlaylistId ===
+                playlistToDelete.id
+                  ? "Deleting..."
+                  : "Delete"}
               </button>
             </div>
           </div>

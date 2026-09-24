@@ -33,8 +33,11 @@ export function PlaylistMenu({
   const [addedPlaylistId, setAddedPlaylistId] =
     useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [menuAlign, setMenuAlign] =
+    useState<"left" | "right">("right");
 
   const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const isAdded = addedPlaylistId !== null;
   const isPlaylistPage = Boolean(playlistId);
@@ -68,6 +71,26 @@ export function PlaylistMenu({
   useEffect(() => {
     if (!isOpen) {
       return;
+    }
+
+    const trigger = triggerRef.current;
+
+    if (trigger) {
+      const triggerRect = trigger.getBoundingClientRect();
+      const menuWidth = 220;
+      const padding = 12;
+      const overflowRight =
+        window.innerWidth -
+          triggerRect.right <
+        menuWidth + padding;
+      const overflowLeft =
+        triggerRect.left < menuWidth + padding;
+
+      setMenuAlign(
+        overflowRight && !overflowLeft
+          ? "left"
+          : "right",
+      );
     }
 
     function handleClickOutside(
@@ -172,6 +195,7 @@ export function PlaylistMenu({
       onClick={handleMenuClick}
     >
       <button
+        ref={triggerRef}
         type="button"
         className="playlist-menu-trigger"
         onClick={handleTriggerClick}
@@ -190,7 +214,10 @@ export function PlaylistMenu({
       </button>
 
       {!isPlaylistPage && isOpen && (
-        <div className="playlist-menu-dropdown">
+        <div
+          className="playlist-menu-dropdown"
+          data-align={menuAlign}
+        >
           <div className="playlist-menu-header">
             <strong>Add to playlist</strong>
           </div>
