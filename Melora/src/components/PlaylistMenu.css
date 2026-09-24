@@ -1,12 +1,8 @@
-.playlist-menu {
-  position: relative;
-  flex-shrink: 0;
-}
-
 .playlist-menu-trigger {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 28px;
   height: 28px;
   padding: 0;
@@ -17,116 +13,150 @@
   cursor: pointer;
 }
 
-.playlist-menu-trigger:hover,
-.playlist-menu-trigger[aria-expanded="true"] {
+.playlist-menu-trigger:hover {
   background: #1c1c23;
   color: #ffffff;
 }
 
-.playlist-menu-dropdown {
-  position: absolute;
-  top: 34px;
-  right: 0;
-  z-index: 100;
-  width: 220px;
-  max-width: calc(100vw - 32px);
+.playlist-menu-trigger:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.add-playlist-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.add-playlist-modal {
+  width: min(420px, 100%);
+  max-height: min(520px, calc(100vh - 40px));
   overflow: hidden;
   border: 1px solid #27272a;
-  border-radius: 12px;
+  border-radius: 14px;
   background: #141419;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-  justify-self: flex-end;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
-.playlist-menu-dropdown[data-align="left"] {
-  right: auto;
-  left: 0;
-}
-
-.playlist-menu-dropdown[data-align="right"] {
-  right: 0;
-  left: auto;
-}
-
-.playlist-menu-header {
-  padding: 12px 14px;
-  border-bottom: 1px solid #27272a;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.playlist-menu-list {
-  max-height: 220px;
-  overflow-y: auto;
-  padding: 6px;
-  overscroll-behavior: contain;
-}
-
-.playlist-menu-item {
+.add-playlist-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  gap: 12px;
-  padding: 10px;
+  padding: 20px;
+  border-bottom: 1px solid #27272a;
+}
+
+.add-playlist-modal-header h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.add-playlist-modal-header button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   background: transparent;
   color: #a1a1aa;
-  font-size: 13px;
+  cursor: pointer;
+}
+
+.add-playlist-modal button:hover {
+  background: #1c1c23;
+  color: #ffffff;
+}
+
+.add-playlist-modal-header button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.add-playlist-modal-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.add-playlist-modal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #a1a1aa;
+  font-size: 14px;
   text-align: left;
   cursor: pointer;
 }
 
-.playlist-menu-item span {
+.add-playlist-modal-item span {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.playlist-menu-item:hover {
+.add-playlist-modal svg {
+  flex-shrink: 0;
+}
+
+.add-playlist-modal-item:hover {
   background: #1c1c23;
   color: #ffffff;
 }
 
-.playlist-menu-item:disabled {
+.add-playlist-modal-item:disabled {
   cursor: default;
   opacity: 0.6;
 }
 
-.playlist-menu-status {
+.add-playlist-modal-status {
   margin: 0;
-  padding: 14px 12px;
+  padding: 24px 20px;
   color: #71717a;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.playlist-menu-message {
-  margin: 0;
-  padding: 9px 12px;
-  border-top: 1px solid #27272a;
-  color: #8b5cf6;
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 @media (max-width: 480px) {
-  .playlist-menu-dropdown {
-    top: 34px;
-    right: auto;
-    left: 0;
-    width: min(260px, calc(100vw - 24px));
+  .add-playlist-modal-backdrop {
+    padding: 16px;
   }
 
-  .playlist-menu-header {
-    padding: 13px 14px;
+  .add-playlist-modal {
+    width: 100%;
+    max-height: calc(100vh - 32px);
   }
 
-  .playlist-menu-item {
-    min-height: 44px;
+  .add-playlist-modal-header {
+    padding: 18px;
+  }
+
+  .add-playlist-modal-list {
+    max-height: calc(100vh - 120px);
+    padding: 6px;
+  }
+
+  .add-playlist-modal-item {
+    min-height: 48px;
     padding: 11px 12px;
-    gap: 16px;
   }
 }

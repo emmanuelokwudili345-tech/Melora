@@ -1,10 +1,9 @@
 import {
   useEffect,
-  useRef,
   useState,
   type MouseEvent,
 } from "react";
-import { ListMinus, ListPlus } from "lucide-react";
+import { ListMinus, ListPlus, X } from "lucide-react";
 import { usePlaylist } from "../context/usePlaylist";
 import {
   getPlaylistIdForTrack,
@@ -33,11 +32,6 @@ export function PlaylistMenu({
   const [addedPlaylistId, setAddedPlaylistId] =
     useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [menuAlign, setMenuAlign] =
-    useState<"left" | "right">("right");
-
-  const menuRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const isAdded = addedPlaylistId !== null;
   const isPlaylistPage = Boolean(playlistId);
@@ -73,46 +67,23 @@ export function PlaylistMenu({
       return;
     }
 
-    const trigger = triggerRef.current;
-
-    if (trigger) {
-      const triggerRect = trigger.getBoundingClientRect();
-      const menuWidth = 220;
-      const padding = 12;
-      const overflowRight =
-        window.innerWidth -
-          triggerRect.right <
-        menuWidth + padding;
-      const overflowLeft =
-        triggerRect.left < menuWidth + padding;
-
-      setMenuAlign(
-        overflowRight && !overflowLeft
-          ? "left"
-          : "right",
-      );
-    }
-
-    function handleClickOutside(
-      event: globalThis.MouseEvent,
+    function handleEscape(
+      event: KeyboardEvent,
     ) {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node)
-      ) {
+      if (event.key === "Escape") {
         setIsOpen(false);
       }
     }
 
     document.addEventListener(
-      "mousedown",
-      handleClickOutside,
+      "keydown",
+      handleEscape,
     );
 
     return () => {
       document.removeEventListener(
-        "mousedown",
-        handleClickOutside,
+        "keydown",
+        handleEscape,
       );
     };
   }, [isOpen]);
@@ -179,23 +150,26 @@ export function PlaylistMenu({
       return;
     }
 
-    setIsOpen((current) => !current);
+    setIsOpen(true);
   }
 
-  function handleMenuClick(
+  function handleModalClick(
     event: MouseEvent<HTMLDivElement>,
   ) {
     event.stopPropagation();
   }
 
+  function handleBackdropClick() {
+    if (isLoading) {
+      return;
+    }
+
+    setIsOpen(false);
+  }
+
   return (
-    <div
-      ref={menuRef}
-      className="playlist-menu"
-      onClick={handleMenuClick}
-    >
+    <>
       <button
-        ref={triggerRef}
         type="button"
         className="playlist-menu-trigger"
         onClick={handleTriggerClick}
@@ -215,37 +189,54 @@ export function PlaylistMenu({
 
       {!isPlaylistPage && isOpen && (
         <div
-          className="playlist-menu-dropdown"
-          data-align={menuAlign}
+          className="add-playlist-modal-backdrop"
+          onMouseDown={handleBackdropClick}
         >
-          <div className="playlist-menu-header">
-            <strong>Add to playlist</strong>
-          </div>
+          <div
+            className="add-playlist-modal"
+            onMouseDown={handleModalClick}
+          >
+            <div className="add-playlist-modal-header">
+              <h2>Add to Playlist</h2>
 
-          {playlists.length === 0 ? (
-            <p className="playlist-menu-status">
-              You haven't created any playlists yet.
-            </p>
-          ) : (
-            <div className="playlist-menu-list">
-              {playlists.map((playlist) => (
-                <button
-                  key={playlist.id}
-                  type="button"
-                  className="playlist-menu-item"
-                  onClick={() =>
-                    handleAddToPlaylist(playlist.id)
-                  }
-                  disabled={isLoading}
-                >
-                  <span>{playlist.name}</span>
-                  <ListPlus size={16} />
-                </button>
-              ))}
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close"
+                disabled={isLoading}
+              >
+                <X size={20} />
+              </button>
             </div>
-          )}
+
+            {playlists.length === 0 ? (
+              <p className="add-playlist-modal-status">
+                You haven't created any
+                playlists yet.
+              </p>
+            ) : (
+              <div className="add-playlist-modal-list">
+                {playlists.map((playlist) => (
+                  <button
+                    key={playlist.id}
+                    type="button"
+                    className="add-playlist-modal-item"
+                    onClick={() =>
+                      handleAddToPlaylist(
+                        playlist.id,
+                      )
+                    }
+                    disabled={isLoading}
+                  >
+                    <span>{playlist.name}</span>
+                    <ListPlus size={17} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
