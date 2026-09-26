@@ -28,9 +28,14 @@
   font-weight: 600;
 }
 
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .profile-info span {
   display: block;
-  margin-bottom: 6px;
   color: #a78bfa;
   font-size: 11px;
   font-weight: 700;
@@ -38,7 +43,7 @@
 }
 
 .profile-info h1 {
-  margin: 0 0 6px;
+  margin: 0;
   color: #ffffff;
   font-size: 28px;
   font-weight: 600;
@@ -50,9 +55,14 @@
   font-size: 14px;
 }
 
+.profile-info small {
+  color: #8b5cf6;
+  font-size: 12px;
+}
+
 .profile-stats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   margin-top: 24px;
 }
@@ -112,7 +122,7 @@
 
 .profile-account {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -152,6 +162,13 @@
   overflow-wrap: anywhere;
 }
 
+.profile-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.profile-secondary,
 .profile-logout {
   display: flex;
   align-items: center;
@@ -159,14 +176,29 @@
   gap: 10px;
   width: 100%;
   height: 44px;
-  border: 1px solid #3f2024;
   border-radius: 9px;
-  background: #1c1518;
-  color: #f87171;
   font: inherit;
   font-weight: 500;
-  cursor: pointer;
   transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.profile-secondary {
+  border: 1px solid #2d2c36;
+  background: #1b1b22;
+  color: #e4e4e7;
+  cursor: pointer;
+}
+
+.profile-secondary:hover {
+  background: #22222c;
+  border-color: #3d3d4b;
+}
+
+.profile-logout {
+  border: 1px solid #3f2024;
+  background: #1c1518;
+  color: #f87171;
+  cursor: pointer;
 }
 
 .profile-logout:hover:not(:disabled) {
@@ -182,6 +214,7 @@
 @media (max-width: 600px) {
   .profile-hero {
     padding: 22px;
+    align-items: flex-start;
   }
 
   .profile-avatar {
@@ -202,7 +235,8 @@
     padding: 20px;
   }
 
-  .profile-account {
+  .profile-account,
+  .profile-actions {
     grid-template-columns: 1fr;
   }
 }
