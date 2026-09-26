@@ -73,6 +73,29 @@
   white-space: nowrap;
 }
 
+.music-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.music-card-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #2d2c36;
+  border-radius: 8px;
+  background: #181920;
+  color: #d4d4d8;
+  text-decoration: none;
+}
+
+.music-card-download:hover {
+  background: #22222c;
+}
+
 .music-card p {
   margin: 0;
   overflow: hidden;

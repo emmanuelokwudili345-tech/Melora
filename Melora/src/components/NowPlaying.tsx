@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ChevronDown,
+  Download,
   Heart,
-  ListPlus,
   MoreHorizontal,
   Pause,
   Play,
@@ -11,10 +11,10 @@ import {
   Shuffle,
   SkipBack,
   SkipForward,
-  User,
 } from "lucide-react";
 import { useLikedTracks } from "../context/useLikedTracks";
 import { usePlayer } from "../context/usePlayer";
+import { PlaylistMenu } from "./PlaylistMenu";
 import "./NowPlaying.css";
 
 interface NowPlayingProps {
@@ -175,25 +175,24 @@ export function NowPlaying({
               className="now-playing-options-menu"
               role="menu"
             >
-              <button
-                type="button"
-                onClick={handleCloseOptions}
-                role="menuitem"
-              >
-                <ListPlus size={20} />
+              <PlaylistMenu
+                track={track}
+                variant="row"
+              />
 
-                <span>Add to queue</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleCloseOptions}
-                role="menuitem"
-              >
-                <User size={20} />
-
-                <span>View artist</span>
-              </button>
+              {track.stream?.url && (
+                <a
+                  href={track.stream.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  download
+                  className="now-playing-menu-download"
+                  onClick={handleCloseOptions}
+                >
+                  <Download size={20} />
+                  <span>Download</span>
+                </a>
+              )}
             </div>
           )}
         </div>
@@ -216,25 +215,27 @@ export function NowPlaying({
             <p>{track.user.name}</p>
           </div>
 
-          <button
-            type="button"
-            className={
-              isLiked
-                ? "now-playing-track-like-active"
-                : ""
-            }
-            onClick={handleLikeClick}
-            aria-label={
-              isLiked
-                ? `Unlike ${track.title}`
-                : `Like ${track.title}`
-            }
-          >
-            <Heart
-              size={22}
-              fill={isLiked ? "currentColor" : "none"}
-            />
-          </button>
+          <div className="now-playing-track-actions">
+            <button
+              type="button"
+              className={
+                isLiked
+                  ? "now-playing-track-like-active"
+                  : ""
+              }
+              onClick={handleLikeClick}
+              aria-label={
+                isLiked
+                  ? `Unlike ${track.title}`
+                  : `Like ${track.title}`
+              }
+            >
+              <Heart
+                size={22}
+                fill={isLiked ? "currentColor" : "none"}
+              />
+            </button>
+          </div>
         </div>
 
         <div className="now-playing-progress">

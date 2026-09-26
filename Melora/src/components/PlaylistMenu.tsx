@@ -15,12 +15,14 @@ interface PlaylistMenuProps {
   track: MusicTrack;
   playlistId?: string;
   onTrackRemoved?: (trackId: string) => void;
+  variant?: "icon" | "row";
 }
 
 export function PlaylistMenu({
   track,
   playlistId,
   onTrackRemoved,
+  variant = "icon",
 }: PlaylistMenuProps) {
   const {
     playlists,
@@ -171,7 +173,11 @@ export function PlaylistMenu({
     <>
       <button
         type="button"
-        className="playlist-menu-trigger"
+        className={
+          variant === "row"
+            ? "playlist-menu-trigger-row"
+            : "playlist-menu-trigger"
+        }
         onClick={handleTriggerClick}
         disabled={isLoading}
         aria-label={
@@ -184,6 +190,14 @@ export function PlaylistMenu({
           <ListMinus size={18} />
         ) : (
           <ListPlus size={18} />
+        )}
+
+        {variant === "row" && (
+          <span>
+            {isAdded || isPlaylistPage
+              ? "Added to Playlist"
+              : "Add to Playlist"}
+          </span>
         )}
       </button>
 

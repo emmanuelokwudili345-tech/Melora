@@ -75,7 +75,8 @@
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
 }
 
-.now-playing-options-menu button {
+.now-playing-options-menu button,
+.now-playing-options-menu a {
   display: flex;
   align-items: center;
 
@@ -96,14 +97,18 @@
 
   text-align: left;
 
+  text-decoration: none;
+
   cursor: pointer;
 }
 
-.now-playing-options-menu button:hover {
+.now-playing-options-menu button:hover,
+.now-playing-options-menu a:hover {
   background: #282a35;
 }
 
-.now-playing-options-menu button svg {
+.now-playing-options-menu button svg,
+.now-playing-options-menu a svg {
   color: #a1a1aa;
 }
 
@@ -182,7 +187,15 @@
   white-space: nowrap;
 }
 
-.now-playing-track button {
+.now-playing-track-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.now-playing-track button,
+.now-playing-download,
+.now-playing-track-actions .playlist-menu-trigger {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -195,6 +208,7 @@
   padding: 0;
 
   border: none;
+  border-radius: 10px;
   background: transparent;
 
   color: #ffffff;
@@ -202,7 +216,19 @@
   cursor: pointer;
 }
 
+.now-playing-download {
+  text-decoration: none;
+}
+
+.now-playing-track-like-active {
+  color: #8b5cf6;
+}
+
 /* PROGRESS */
+
+.now-playing-menu-download {
+  text-decoration: none;
+}
 
 .now-playing-progress {
   margin-top: 28px;

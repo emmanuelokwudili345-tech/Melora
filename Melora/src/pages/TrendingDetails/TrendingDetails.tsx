@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
+  Download,
   Heart,
   LoaderCircle,
   Pause,
@@ -9,6 +10,7 @@ import {
 import { useNavigate, useParams } from "react-router";
 import { useLikedTracks } from "../../context/useLikedTracks";
 import { usePlayer } from "../../context/usePlayer";
+import { PlaylistMenu } from "../../components/PlaylistMenu";
 import { getTrackById } from "../../services/audius";
 import type { MusicTrack } from "../../types/music";
 import "./TrendingDetails.css";
@@ -273,6 +275,21 @@ export function TrendingDetails() {
                 }
               />
             </button>
+
+            <PlaylistMenu track={track} />
+
+            {track.stream?.url && (
+              <a
+                href={track.stream.url}
+                target="_blank"
+                rel="noreferrer"
+                download
+                className="trending-details-download"
+                aria-label={`Download ${track.title}`}
+              >
+                <Download size={18} />
+              </a>
+            )}
           </div>
         </div>
       </section>
