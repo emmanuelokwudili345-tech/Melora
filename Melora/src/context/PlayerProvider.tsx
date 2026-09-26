@@ -1,6 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { ReactNode } from "react";
 import type { MusicTrack } from "../types/music";
+import { addRecentlyPlayed } from "../services/recentlyPlayed";
 import {
   PlayerContext,
   type RepeatMode,
@@ -21,13 +28,17 @@ export function PlayerProvider({
   const [currentTrackIndex, setCurrentTrackIndex] =
     useState(-1);
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] =
+    useState(false);
 
-  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTime, setCurrentTime] =
+    useState(0);
 
-  const [duration, setDuration] = useState(0);
+  const [duration, setDuration] =
+    useState(0);
 
-  const [volume, setVolumeState] = useState(0.7);
+  const [volume, setVolumeState] =
+    useState(0.7);
 
   const [repeatMode, setRepeatMode] =
     useState<RepeatMode>("off");
@@ -35,7 +46,11 @@ export function PlayerProvider({
   const [isShuffleEnabled, setIsShuffleEnabled] =
     useState(false);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef =
+    useRef<HTMLAudioElement | null>(null);
+
+  const recentlyPlayedTrackId =
+    useRef<string | null>(null);
 
   useEffect(() => {
     if (!currentTrack || !audioRef.current) {
@@ -44,56 +59,75 @@ export function PlayerProvider({
 
     setCurrentTime(0);
     setDuration(0);
+    recentlyPlayedTrackId.current = null;
   }, [currentTrack]);
 
-  function handleTrackChange(track: MusicTrack) {
-    const trackIndex = queue.findIndex(
-      (queueTrack) => queueTrack.id === track.id,
-    );
+  const handleTrackChange = useCallback(
+    (track: MusicTrack) => {
+      const trackIndex = queue.findIndex(
+        (queueTrack) =>
+          queueTrack.id === track.id,
+      );
 
-    setCurrentTrack(track);
-    setCurrentTrackIndex(trackIndex);
-  }
+      setCurrentTrack(track);
+      setCurrentTrackIndex(trackIndex);
+    },
+    [queue],
+  );
 
-  function handleQueueChange(tracks: MusicTrack[]) {
-    setQueue(tracks);
+  const handleQueueChange = useCallback(
+    (tracks: MusicTrack[]) => {
+      setQueue(tracks);
 
-    if (!currentTrack && tracks.length > 0) {
-      setCurrentTrackIndex(-1);
-    }
-  }
+      if (
+        !currentTrack &&
+        tracks.length > 0
+      ) {
+        setCurrentTrackIndex(-1);
+      }
+    },
+    [currentTrack],
+  );
 
-  async function play() {
+  const play = useCallback(async () => {
     try {
       await audioRef.current?.play();
     } catch (error) {
-      console.error("Failed to play track:", error);
+      console.error(
+        "Failed to play track:",
+        error,
+      );
     }
-  }
+  }, []);
 
-  function pause() {
+  const pause = useCallback(() => {
     audioRef.current?.pause();
-  }
+  }, []);
 
-  function seek(time: number) {
+  const seek = useCallback((time: number) => {
     if (!audioRef.current) {
       return;
     }
 
     audioRef.current.currentTime = time;
     setCurrentTime(time);
-  }
+  }, []);
 
-  function setVolume(volumeValue: number) {
-    if (!audioRef.current) {
-      return;
-    }
+  const setVolume = useCallback(
+    (volumeValue: number) => {
+      if (!audioRef.current) {
+        return;
+      }
 
-    audioRef.current.volume = volumeValue;
-    setVolumeState(volumeValue);
-  }
+      audioRef.current.volume =
+        volumeValue;
 
-  function getRandomTrackIndex() {
+      setVolumeState(volumeValue);
+    },
+    [],
+  );
+
+  const getRandomTrackIndex = useCallback(() => {
     if (queue.length <= 1) {
       return currentTrackIndex;
     }
@@ -102,36 +136,48 @@ export function PlayerProvider({
       Math.random() * queue.length,
     );
 
-    while (randomIndex === currentTrackIndex) {
+    while (
+      randomIndex === currentTrackIndex
+    ) {
       randomIndex = Math.floor(
         Math.random() * queue.length,
       );
     }
 
     return randomIndex;
-  }
+  }, [queue, currentTrackIndex]);
 
-  function nextTrack() {
+  const nextTrack = useCallback(() => {
     if (queue.length === 0) {
       return;
     }
 
     if (isShuffleEnabled) {
-      const randomIndex = getRandomTrackIndex();
+      const randomIndex =
+        getRandomTrackIndex();
 
       if (randomIndex >= 0) {
-        setCurrentTrack(queue[randomIndex]);
-        setCurrentTrackIndex(randomIndex);
+        setCurrentTrack(
+          queue[randomIndex],
+        );
+        setCurrentTrackIndex(
+          randomIndex,
+        );
       }
 
       return;
     }
 
-    const nextIndex = currentTrackIndex + 1;
+    const nextIndex =
+      currentTrackIndex + 1;
 
     if (nextIndex < queue.length) {
-      setCurrentTrack(queue[nextIndex]);
-      setCurrentTrackIndex(nextIndex);
+      setCurrentTrack(
+        queue[nextIndex],
+      );
+      setCurrentTrackIndex(
+        nextIndex,
+      );
 
       return;
     }
@@ -140,33 +186,54 @@ export function PlayerProvider({
       setCurrentTrack(queue[0]);
       setCurrentTrackIndex(0);
     }
-  }
+  }, [
+    queue,
+    currentTrackIndex,
+    isShuffleEnabled,
+    repeatMode,
+    getRandomTrackIndex,
+  ]);
 
-  function previousTrack() {
+  const previousTrack = useCallback(() => {
     if (queue.length === 0) {
       return;
     }
 
     if (isShuffleEnabled) {
-      const randomIndex = getRandomTrackIndex();
+      const randomIndex =
+        getRandomTrackIndex();
 
       if (randomIndex >= 0) {
-        setCurrentTrack(queue[randomIndex]);
-        setCurrentTrackIndex(randomIndex);
+        setCurrentTrack(
+          queue[randomIndex],
+        );
+        setCurrentTrackIndex(
+          randomIndex,
+        );
       }
 
       return;
     }
 
-    const previousIndex = currentTrackIndex - 1;
+    const previousIndex =
+      currentTrackIndex - 1;
 
     if (previousIndex >= 0) {
-      setCurrentTrack(queue[previousIndex]);
-      setCurrentTrackIndex(previousIndex);
+      setCurrentTrack(
+        queue[previousIndex],
+      );
+      setCurrentTrackIndex(
+        previousIndex,
+      );
     }
-  }
+  }, [
+    queue,
+    currentTrackIndex,
+    isShuffleEnabled,
+    getRandomTrackIndex,
+  ]);
 
-  function toggleRepeatMode() {
+  const toggleRepeatMode = useCallback(() => {
     setRepeatMode((currentMode) => {
       if (currentMode === "off") {
         return "all";
@@ -178,29 +245,35 @@ export function PlayerProvider({
 
       return "off";
     });
-  }
+  }, []);
 
-  function toggleShuffle() {
-    setIsShuffleEnabled((isEnabled) => !isEnabled);
-  }
+  const toggleShuffle = useCallback(() => {
+    setIsShuffleEnabled(
+      (isEnabled) => !isEnabled,
+    );
+  }, []);
 
-  function handleTimeUpdate() {
+  const handleTimeUpdate = useCallback(() => {
     if (!audioRef.current) {
       return;
     }
 
-    setCurrentTime(audioRef.current.currentTime);
-  }
+    setCurrentTime(
+      audioRef.current.currentTime,
+    );
+  }, []);
 
-  function handleLoadedMetadata() {
+  const handleLoadedMetadata = useCallback(() => {
     if (!audioRef.current) {
       return;
     }
 
-    setDuration(audioRef.current.duration);
-  }
+    setDuration(
+      audioRef.current.duration,
+    );
+  }, []);
 
-  async function handleCanPlay() {
+  const handleCanPlay = useCallback(async () => {
     try {
       await audioRef.current?.play();
     } catch (error) {
@@ -209,9 +282,9 @@ export function PlayerProvider({
         error,
       );
     }
-  }
+  }, []);
 
-  async function handleTrackEnded() {
+  const handleTrackEnded = useCallback(async () => {
     if (!audioRef.current) {
       return;
     }
@@ -236,44 +309,98 @@ export function PlayerProvider({
     }
 
     nextTrack();
-  }
+  }, [queue.length, nextTrack, repeatMode]);
+
+  const handlePlay = useCallback(async () => {
+    setIsPlaying(true);
+
+    if (
+      !currentTrack ||
+      recentlyPlayedTrackId.current ===
+        currentTrack.id
+    ) {
+      return;
+    }
+
+    recentlyPlayedTrackId.current =
+      currentTrack.id;
+
+    try {
+      await addRecentlyPlayed(
+        currentTrack,
+      );
+    } catch (error) {
+      console.error(
+        "Failed to save recently played track:",
+        error,
+      );
+    }
+  }, [currentTrack]);
+
+  const contextValue = useMemo(
+    () => ({
+      currentTrack,
+      isPlaying,
+      currentTime,
+      duration,
+      volume,
+
+      repeatMode,
+      isShuffleEnabled,
+
+      setCurrentTrack:
+        handleTrackChange,
+      setQueue: handleQueueChange,
+
+      play,
+      pause,
+      seek,
+      setVolume,
+
+      nextTrack,
+      previousTrack,
+
+      toggleRepeatMode,
+      toggleShuffle,
+    }),
+    [
+      currentTrack,
+      isPlaying,
+      currentTime,
+      duration,
+      volume,
+      repeatMode,
+      isShuffleEnabled,
+      handleTrackChange,
+      handleQueueChange,
+      play,
+      pause,
+      seek,
+      setVolume,
+      nextTrack,
+      previousTrack,
+      toggleRepeatMode,
+      toggleShuffle,
+    ],
+  );
 
   return (
     <PlayerContext.Provider
-      value={{
-        currentTrack,
-        isPlaying,
-        currentTime,
-        duration,
-        volume,
-
-        repeatMode,
-        isShuffleEnabled,
-
-        setCurrentTrack: handleTrackChange,
-        setQueue: handleQueueChange,
-
-        play,
-        pause,
-        seek,
-        setVolume,
-
-        nextTrack,
-        previousTrack,
-
-        toggleRepeatMode,
-        toggleShuffle,
-      }}
+      value={contextValue}
     >
       <audio
         ref={audioRef}
         src={currentTrack?.stream?.url}
         preload="auto"
         onCanPlay={handleCanPlay}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
+        onPlay={handlePlay}
+        onPause={() =>
+          setIsPlaying(false)
+        }
         onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
+        onLoadedMetadata={
+          handleLoadedMetadata
+        }
         onEnded={handleTrackEnded}
       />
 

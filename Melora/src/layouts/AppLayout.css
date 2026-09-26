@@ -19,11 +19,11 @@
 .page-content {
   width: 100%;
   min-width: 0;
-  padding: 24px 24px 130px;
+  padding: 24px 24px 20px;
 }
 
 @media (max-width: 768px) {
   .page-content {
-    padding: 24px 24px 110px;
+    padding: 24px 24px 20px;
   }
 }

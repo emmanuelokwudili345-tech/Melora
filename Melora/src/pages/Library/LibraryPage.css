@@ -138,6 +138,88 @@
   font-weight: 600;
 }
 
+.library-recent {
+  margin-top: 40px;
+}
+
+.library-section-header {
+  margin-bottom: 18px;
+}
+
+.library-section-header span {
+  display: block;
+  margin-bottom: 6px;
+  color: #a78bfa;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.library-section-header h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.library-track-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(180px, 1fr)
+  );
+  gap: 18px;
+}
+
+.library-status {
+  margin: 0;
+  color: #71717a;
+  font-size: 14px;
+}
+
+.library-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 30px;
+  border: 1px solid #282a35;
+  border-radius: 14px;
+  background: #181920;
+  color: #71717a;
+  text-align: center;
+}
+
+.library-empty h3 {
+  margin: 14px 0 6px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.library-empty p {
+  max-width: 360px;
+  margin: 0;
+  color: #71717a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .library-recent {
+    margin-top: 32px;
+  }
+
+  .library-track-grid {
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+    gap: 12px;
+  }
+}
+
 @media (max-width: 900px) {
   .library-sections {
     grid-template-columns: 1fr;

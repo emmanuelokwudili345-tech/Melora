@@ -1,7 +1,6 @@
 .home-page {
   width: 100%;
   max-width: 1400px;
-
   margin: 0 auto;
 }
 
@@ -11,15 +10,12 @@
 
 .home-greeting p {
   margin: 0 0 4px;
-
   color: #a1a1aa;
-
   font-size: 14px;
 }
 
 .home-greeting h1 {
   margin: 0;
-
   font-size: 28px;
   font-weight: 600;
 }
@@ -59,18 +55,21 @@
   color: #ffffff;
 }
 
+.home-empty-state {
+  margin: 0;
+  padding: 12px 0;
+  color: #a1a1aa;
+  font-size: 14px;
+}
+
 /* FEATURED */
 
 .featured-card {
   display: flex;
   align-items: flex-end;
-
   min-height: 260px;
-
   padding: 28px;
-
   border-radius: 14px;
-
   background:
     linear-gradient(
       90deg,
@@ -80,16 +79,20 @@
     #1c1c23;
 }
 
+.featured-card-skeleton {
+  background: linear-gradient(90deg, #1b1b20 0%, #202028 50%, #1b1b20 100%);
+  background-size: 200% 100%;
+  animation: homeSkeleton 1.25s ease-in-out infinite;
+}
+
 .featured-content {
   max-width: 440px;
 }
 
 .featured-content span {
   color: #a1a1aa;
-
   font-size: 11px;
   font-weight: 600;
-
   letter-spacing: 0.08em;
 }
 
@@ -100,35 +103,81 @@
 
 .featured-content p {
   margin: 0 0 20px;
-
   color: #a1a1aa;
-
   line-height: 1.5;
 }
 
 .featured-content button {
   padding: 10px 18px;
-
   border: none;
   border-radius: 999px;
-
   background: #8b5cf6;
-
   color: #ffffff;
-
   font-weight: 600;
-
   cursor: pointer;
+}
+
+.skeleton-line,
+.skeleton-button,
+.home-card-skeleton,
+.artist-skeleton-card,
+.skeleton-number,
+.skeleton-artwork {
+  background: linear-gradient(90deg, #1d1d23 0%, #2a2a31 50%, #1d1d23 100%);
+  background-size: 200% 100%;
+  animation: homeSkeleton 1.25s ease-in-out infinite;
+}
+
+.skeleton-line {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.skeleton-title {
+  width: 70%;
+  height: 28px;
+  margin-bottom: 14px;
+}
+
+.skeleton-copy {
+  width: 100%;
+}
+
+.skeleton-copy.short {
+  width: 72%;
+}
+
+.skeleton-button {
+  width: 118px;
+  height: 42px;
+  border-radius: 999px;
+  margin-top: 20px;
 }
 
 /* MUSIC CARDS */
 
-.music-card-grid {
+.home-skeleton-grid,
+.home-card-skeleton,
+.new-releases-skeleton {
   display: grid;
-
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-
   gap: 16px;
+}
+
+.home-skeleton-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.home-card-skeleton {
+  height: 250px;
+  border-radius: 14px;
+}
+
+.new-releases-skeleton {
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(180px, 1fr);
+  overflow-x: auto;
 }
 
 /* POPULAR ARTISTS */
@@ -149,6 +198,17 @@
   display: none;
 }
 
+.artist-skeleton-grid {
+  display: flex;
+  gap: 16px;
+}
+
+.artist-skeleton-card {
+  flex: 0 0 160px;
+  height: 200px;
+  border-radius: 16px;
+}
+
 /* ALBUMS */
 
 .album-card-grid {
@@ -164,6 +224,10 @@
 .trending-list {
   display: flex;
   flex-direction: column;
+}
+
+.trending-list-skeleton .trending-row {
+  cursor: default;
 }
 
 .trending-row {
@@ -202,6 +266,13 @@
   font-size: 13px;
 }
 
+.skeleton-number {
+  display: block;
+  width: 18px;
+  height: 12px;
+  border-radius: 999px;
+}
+
 .trending-artwork {
   width: 48px;
   height: 48px;
@@ -211,6 +282,12 @@
   border-radius: 8px;
 
   background: #1c1c23;
+}
+
+.skeleton-artwork {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
 }
 
 .trending-artwork img {
@@ -251,6 +328,17 @@
   white-space: nowrap;
 }
 
+.skeleton-track-name {
+  width: 75%;
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.skeleton-artist-name {
+  width: 50%;
+  height: 12px;
+}
+
 .new-releases-grid {
   display: flex;
 
@@ -271,6 +359,39 @@
   flex: 0 0 180px;
 }
 
+.home-page-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  color: #d4d4d8;
+  font-size: 13px;
+}
+
+.home-page-loader-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes homeSkeleton {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 1024px) {
@@ -284,6 +405,10 @@
 }
 
 @media (max-width: 768px) {
+  .home-skeleton-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .music-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
